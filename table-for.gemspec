@@ -17,7 +17,6 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     "Gemfile",
-    "Gemfile.lock",
     "README.rdoc",
     "Rakefile",
     "VERSION",
