@@ -51,7 +51,7 @@ begin
     gemspec.email = "hunterae@gmail.com"
     gemspec.homepage = "http://github.com/hunterae/table-for"
     gemspec.authors = ["Andrew Hunter"]
-    gemspec.files =  FileList["[A-Z]*", "{lib,spec,rails}/**/*"] - FileList["**/*.log"]
+    gemspec.files =  FileList["[A-Z]*", "{lib,spec,app,rails}/**/*"] - FileList["**/*.log"]
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
