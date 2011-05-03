@@ -1,4 +1,3 @@
-require "table-for"
 require "rails"
 
 module TableFor
