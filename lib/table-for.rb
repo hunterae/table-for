@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 
 require "table_for/table_for"
 require "table_for/helper_methods"
-# require "table_for/engine"
+require "table_for/engine"
 
 $LOAD_PATH.shift
 
