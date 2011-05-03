@@ -1,7 +1,7 @@
 require 'building-blocks'
 
 module TableFor
-  class Engine < BuildingBlocks::Base
+  class Base < BuildingBlocks::Base
     alias columns block_positions
     alias column use
     
