@@ -1,5 +1,5 @@
 require "rails"
-require "table-for"
+require "table_for"
 
 module TableFor
   class Engine < Rails::Engine
