@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
     "VERSION",
     "lib/table-for.rb",
     "lib/table_for/engine.rb",
+    "lib/table_for/helper_methods.rb",
     "lib/table_for/table_for.rb",
     "rails/init.rb"
   ]
