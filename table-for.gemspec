@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{table-for}
-  s.version = "0.0.10"
+  s.version = "0.0.11"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andrew Hunter"]
@@ -20,10 +20,10 @@ Gem::Specification.new do |s|
     "README.rdoc",
     "Rakefile",
     "VERSION",
-    "app/helpers/table_for/helper_methods.rb",
     "app/views/table_for/_table_for.html.erb",
     "lib/table-for.rb",
     "lib/table_for/engine.rb",
+    "lib/table_for/helper_methods.rb",
     "lib/table_for/table_for.rb",
     "rails/init.rb"
   ]
