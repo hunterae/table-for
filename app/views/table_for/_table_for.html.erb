@@ -1,0 +1,105 @@
+<%= table.define :thead do %>
+  <thead>
+    <%= table.use :header_row %>
+  </thead>
+<% end %>
+
+<%= table.define :header_row do %>
+  <tr>
+    <%= table.use :header_columns %>
+  </tr>
+<% end %>
+
+<%= table.define :header_columns do |options| %>
+  <% table.columns.each do |column| %>
+    <% header_html = options.merge(column.options)[:header_html] %>
+    <% if options.merge(column.options)[:sortable] %>
+      <% order = column.options[:order] ? column.options[:order].to_s : column.name.to_s %>
+    
+      <% sort_class = params[:order] != order ? "sorting" : (params[:sort_mode] == "desc" ? "sorting_desc" : "sorting_asc") %> 
+      <% header_html = {} if header_html.nil? %> 
+      <% header_html[:class] ||= "" %>
+      <% header_html[:class] += " #{sort_class}" %>
+    <% end %>
+    
+    <%= content_tag :th, header_html do %>
+      <%= table.use "#{column.name.to_s}_header", options.merge(column.options) %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% table.columns.each do |column| %>  
+  <%= table.define "#{column.name.to_s}_header", :column => column do |options| %>
+    <% if options[:sortable] %>
+      <%= table.use "#{options[:column].name.to_s}_header_sortable_link", options %>
+    <% else %>
+      <%= options[:label] ? options[:label] : options[:column].name.to_s.titleize %>
+    <% end %>
+  <% end %>
+  
+  <%= table.define "#{column.name.to_s}_header_sortable_link", :column => column do |options| %>
+    <%= table.use :header_sortable_link, options %>
+  <% end %>
+<% end %>
+ 
+<%= table.define :header_sortable_link do |options| %>
+  <% order = options[:order] ? options[:order].to_s : options[:column].name.to_s %>
+  <% label = (options[:label] ? options[:label] : options[:column].name.to_s.titleize) %>
+  <% sort_mode = ((params[:order] != order or params[:sort_mode] == "desc") ? "asc" : "desc") %>
+  <% parameters = params.merge({:order => (options[:order] ? options[:order] : options[:column].name), :sort_mode => sort_mode}) %>
+  <% parameters.delete(:action); parameters.delete(:controller) %>
+  <% url = options[:sort_url] ? options[:sort_url] : "" %>
+
+  <%= link_to label, "#{url}?#{parameters.to_query}" %>
+<% end %>
+
+<%= table.define :tbody do %>
+  <tbody>
+    <%= table.use :rows %>
+  </tbody>
+<% end %>
+
+<%= table.define :rows do %>
+  <% records.each do |record| %>
+    <%= table.use :row, record %>
+  <% end %>
+<% end %>
+
+<%= table.define :row do |record, options| %>
+  <%= content_tag :tr, table_for_options(options[:row_html], options) do %>
+    <%= table.use :data_columns, record, options %>
+  <% end %>
+<% end %>
+
+<%= table.define :data_columns do |record, options| %>
+  <% table.columns.each do |column| %>
+    <%= content_tag :td, options.merge(column.options)[:column_html] do %>
+      <%= table.use column, record, options.merge(:column => column) %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% table.columns.each do |column| %>
+  <%= table.define column.name, :column => column do |record, options| %>
+    <%= record.send(options[:column].name) %>
+  <% end %>
+<% end %>
+
+<%= table.define :edit, :action => :edit do |record, options| %>
+  <%= link_to "Edit", [options[:action], options[:scope], record].flatten, options[:link_html] %>
+<% end %>
+
+<%= table.define :show, :action => nil do |record, options| %>
+  <%= link_to "Show", [options[:action], options[:scope], record].flatten, options[:link_html] %>
+<% end %>
+
+<%= table.define :delete, :link_html => {} do |record, options| %>
+  <%= link_to "Delete", [options[:scope], record].flatten, {:method => "delete", :confirm => "Are you sure you want to delete this #{record.class.to_s.humanize}?"}.merge(options[:link_html]) %>
+<% end %>
+
+<%= table.use :table do |options| %>
+  <%= content_tag :table, options[:table_html] do %>
+    <%= table.use :thead %>
+    <%= table.use :tbody %>
+  <% end %>
+<% end %>
