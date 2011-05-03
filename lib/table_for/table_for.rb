@@ -1,4 +1,5 @@
-require 'building-blocks'
+require 'rails'
+require 'table-for'
 
 module TableFor
   class Base < BuildingBlocks::Base
