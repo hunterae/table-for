@@ -1,4 +1,4 @@
-source :gemcutter
+source :rubygems
 
 # Rails 3.0
 gem 'rails'
