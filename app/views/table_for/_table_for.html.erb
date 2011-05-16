@@ -1,13 +1,20 @@
-<%= table.define :thead do %>
-  <thead>
-    <%= table.use :header_row %>
-  </thead>
+<%= table.define :table do |options| %>
+  <%= content_tag :table, options[:table_html] do %>
+    <%= table.use :thead %>
+    <%= table.use :tbody %>
+  <% end %>
 <% end %>
 
-<%= table.define :header_row do %>
-  <tr>
+<%= table.define :thead do |options| %>
+  <%= content_tag :thead, options[:thead_html] do %>
+    <%= table.use :header_row %>
+  <% end %>
+<% end %>
+
+<%= table.define :header_row do |options| %>
+  <%= content_tag :tr, options[:header_row_html] do %>  
     <%= table.use :header_columns %>
-  </tr>
+  <% end %>
 <% end %>
 
 <%= table.define :header_columns do |options| %>
@@ -53,10 +60,10 @@
   <%= link_to label, "#{url}?#{parameters.to_query}" %>
 <% end %>
 
-<%= table.define :tbody do %>
-  <tbody>
+<%= table.define :tbody do |options| %>
+  <%= content_tag :tbody, options[:tbody_html] do %>
     <%= table.use :rows %>
-  </tbody>
+  <% end %>
 <% end %>
 
 <%= table.define :rows do %>
@@ -79,16 +86,16 @@
   <% end %>
 <% end %>
 
-<%= table.define :edit, :action => :edit do |record, options| %>
-  <%= link_to "Edit", [options[:action], options[:scope], record].flatten, options[:link_html] %>
+<%= table.define :edit, :action => :edit, :link_label => "Edit" do |record, options| %>
+  <%= link_to options[:link_label], [options[:action], options[:scope], record].flatten, options[:link_html] %>
 <% end %>
 
-<%= table.define :show, :action => nil do |record, options| %>
-  <%= link_to "Show", [options[:action], options[:scope], record].flatten, options[:link_html] %>
+<%= table.define :show, :action => nil, :link_label => "Show" do |record, options| %>
+  <%= link_to options[:link_label], [options[:action], options[:scope], record].flatten, options[:link_html] %>
 <% end %>
 
-<%= table.define :delete, :link_html => {} do |record, options| %>
-  <%= link_to "Delete", [options[:scope], record].flatten, {:method => "delete", :confirm => "Are you sure you want to delete this #{record.class.to_s.humanize}?"}.merge(options[:link_html]) %>
+<%= table.define :delete, :link_html => {}, :link_label => "Delete" do |record, options| %>
+  <%= link_to options[:link_label], [options[:scope], record].flatten, {:method => "delete", :confirm => "Are you sure you want to delete this #{record.class.to_s.humanize}?"}.merge(options[:link_html]) %>
 <% end %>
 
 <% table.columns.each do |column| %>
@@ -97,9 +104,4 @@
   <% end %>
 <% end %>
 
-<%= table.use :table do |options| %>
-  <%= content_tag :table, options[:table_html] do %>
-    <%= table.use :thead %>
-    <%= table.use :tbody %>
-  <% end %>
-<% end %>
+<%= table.use :table %>

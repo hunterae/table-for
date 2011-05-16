@@ -7,16 +7,14 @@ module TableFor
     end
     
     def table_for(records, options={}, &block)
-      options[:view] = self
       options[:records] = records
-      options[:block] = block
       options[:row_html] = {:class => lambda { |parameters| cycle('odd', 'even')}} if options[:row_html].nil?
       options[:template] = "table_for/table_for"
       options[:templates_folder] = "table_for"
       options[:record_variable] = "records"
       options[:variable] = "table"
       
-      TableFor::Base.new(options).render
+      TableFor::Base.new(self, options, &block).render
     end
   end
 end
