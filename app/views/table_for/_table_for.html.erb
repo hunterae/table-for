@@ -95,7 +95,7 @@
 <% end %>
 
 <%= table.define :delete, :link_html => {}, :link_label => "Delete" do |record, options| %>
-  <%= link_to options[:link_label], [options[:scope], record].flatten, {:method => "delete", :confirm => "Are you sure you want to delete this #{record.class.to_s.humanize}?"}.merge(options[:link_html]) %>
+  <%= link_to options[:link_label], [options[:scope], record].flatten, {:method => "delete", :confirm => "Are you sure you want to delete this #{record.class.to_s.titleize}?"}.merge(options[:link_html]) %>
 <% end %>
 
 <% table.columns.each do |column| %>
