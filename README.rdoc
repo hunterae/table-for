@@ -1,0 +1,63 @@
+= table-for
+
+Table-for is a table builder for a collection of domain objects. It very easily allows the user to specify the columns to render and to override how the table, the header columns, the rows, and the columns are rendered.
+
+== Installation
+
+In <b>Rails 3</b>, add this to your Gemfile.
+
+  gem "blocks"
+  
+== Sample Usage
+
+Say we have fetched a collection of users from the database (stored as @users), in the view we can generate a very unique table with just a few lines of code:
+
+  <%= table_for @users, 
+              :table_html => {:id => "users"}, 
+              :header_html => {:style => "color:red"},
+              :row_html => {:class => lambda { |parameters| cycle('odd', 'even')}},
+              :column_html => {:style => "color:green"} do |table| %>
+    <%= table.column :name, :column_html => {:style => "color:blue"}, :header_html => {:style => "color:orange"} %>
+    <%= table.column :email %>
+    <%= table.column :phonenumber, :column_html => {:style => "color:orange"}, :header_html => {:style => "color:blue"} do |user| %>
+      <%= phonenumber(user.phonenumber) %>
+    <% end %>
+    <%= table.column :label => "???" do |user| %>
+      Some Random Column
+    <% end %>
+  <% end %>
+  
+Will generate the following table:
+  <table id="users">
+    <thead>
+      <tr>
+        <th style="color:orange">Name</th>    
+        <th style="color:red">Email</th>    
+        <th style="color:blue">Phonenumber</th>    
+        <th style="color:red">???</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="odd">
+        <td style="color:blue">USER 1'S NAME</td>    
+        <td style="color:green">USER 1'S EMAIL</td>    
+        <td style="color:orange">USER 1'S PHONENUMBER</td>    
+        <td style="color:green">Some Random Column</td>
+      </tr>
+      <tr class="even">
+        <td style="color:blue">USER 2'S NAME</td>    
+        <td style="color:green">USER 2'S </td>    
+        <td style="color:orange">USER 2'S PHONENUMBER</td>   
+        <td style="color:green">Some Random Column</td>
+      </tr>
+      ...
+      <tr class="odd">
+        <td style="color:blue">LAST USER'S NAME</td>    
+        <td style="color:green">LAST USER'S EMAIL</td>    
+        <td style="color:orange">LAST USER'S PHONENUMBER</td>    
+        <td style="color:green">Some Random Column</td>
+      </tr>
+    </tbody>
+  </table>
+  
+Notice in the above example, we were able to provide the default attributes to be applied to each column, header, and row. Then, when specifying which columns to render, the column and header attributes could be overridden on a column by column basis.
