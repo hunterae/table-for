@@ -6,7 +6,7 @@ Table-for is a table builder for a collection of domain objects. It very easily 
 
 In <b>Rails 3</b>, add this to your Gemfile.
 
-  gem "blocks"
+  gem "table-for"
   
 == Sample Usage
 
