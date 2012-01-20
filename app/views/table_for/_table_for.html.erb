@@ -1,23 +1,23 @@
-<%= table.define :table do |options| %>
+<% table.define :table do |options| %>
   <%= content_tag :table, options[:table_html] do %>
     <%= table.use :thead %>
     <%= table.use :tbody %>
   <% end %>
 <% end %>
 
-<%= table.define :thead do |options| %>
+<% table.define :thead do |options| %>
   <%= content_tag :thead, options[:thead_html] do %>
     <%= table.use :header_row %>
   <% end %>
 <% end %>
 
-<%= table.define :header_row do |options| %>
+<% table.define :header_row do |options| %>
   <%= content_tag :tr, options[:header_row_html] do %>  
     <%= table.use :header_columns %>
   <% end %>
 <% end %>
 
-<%= table.define :header_columns do |options| %>
+<% table.define :header_columns do |options| %>
   <% table.columns.each do |column| %>
     <% header_html = options.merge(column.options)[:header_html] %>
     <% if options.merge(column.options)[:sortable] %>
@@ -36,7 +36,7 @@
 <% end %>
 
 <% table.columns.each do |column| %>  
-  <%= table.define "#{column.name.to_s}_header", :column => column do |options| %>
+  <% table.define "#{column.name.to_s}_header", :column => column do |options| %>
     <% if options[:sortable] %>
       <%= table.use "#{options[:column].name.to_s}_header_sortable_link", options %>
     <% else %>
@@ -44,12 +44,12 @@
     <% end %>
   <% end %>
   
-  <%= table.define "#{column.name.to_s}_header_sortable_link", :column => column do |options| %>
+  <% table.define "#{column.name.to_s}_header_sortable_link", :column => column do |options| %>
     <%= table.use :header_sortable_link, options %>
   <% end %>
 <% end %>
  
-<%= table.define :header_sortable_link do |options| %>
+<% table.define :header_sortable_link do |options| %>
   <% order = options[:order] ? options[:order].to_s : options[:column].name.to_s %>
   <% label = (options[:label] ? options[:label] : options[:column].name.to_s.titleize) %>
   <% sort_mode = ((params[:order] != order or params[:sort_mode] == "desc") ? "asc" : "desc") %>
@@ -60,25 +60,25 @@
   <%= link_to label, "#{url}?#{parameters.to_query}" %>
 <% end %>
 
-<%= table.define :tbody do |options| %>
+<% table.define :tbody do |options| %>
   <%= content_tag :tbody, options[:tbody_html] do %>
     <%= table.use :rows %>
   <% end %>
 <% end %>
 
-<%= table.define :rows do %>
+<% table.define :rows do %>
   <% records.each do |record| %>
     <%= table.use :row, record %>
   <% end %>
 <% end %>
 
-<%= table.define :row do |record, options| %>
+<% table.define :row do |record, options| %>
   <%= content_tag :tr, table_for_options(options[:row_html], options) do %>
     <%= table.use :data_columns, record, options %>
   <% end %>
 <% end %>
 
-<%= table.define :data_columns do |record, options| %>
+<% table.define :data_columns do |record, options| %>
   <% table.columns.each do |column| %>
     <%= content_tag :td, options.merge(column.options)[:column_html] do %>
       <%= table.use column, record, options.merge(:column => column) %>
@@ -86,22 +86,23 @@
   <% end %>
 <% end %>
 
-<%= table.define :edit, :action => :edit, :link_label => "Edit" do |record, options| %>
+<% table.define :edit, :action => :edit, :link_label => "Edit" do |record, options| %>
   <%= link_to options[:link_label], [options[:action], options[:scope], record].flatten, options[:link_html] %>
 <% end %>
 
-<%= table.define :show, :action => nil, :link_label => "Show" do |record, options| %>
+<% table.define :show, :action => nil, :link_label => "Show" do |record, options| %>
   <%= link_to options[:link_label], [options[:action], options[:scope], record].flatten, options[:link_html] %>
 <% end %>
 
-<%= table.define :delete, :link_html => {}, :link_label => "Delete" do |record, options| %>
+<% table.define :delete, :link_html => {}, :link_label => "Delete" do |record, options| %>
   <%= link_to options[:link_label], [options[:scope], record].flatten, {:method => "delete", :confirm => "Are you sure you want to delete this #{record.class.to_s.titleize}?"}.merge(options[:link_html]) %>
 <% end %>
 
 <% table.columns.each do |column| %>
-  <%= table.define column.name, :column => column do |record, options| %>
+  <% table.define column.name, :column => column do |record, options| %>
     <%= record.send(options[:column].name) %>
   <% end %>
 <% end %>
 
+<%# Now that all the blocks are defined, render the table %>
 <%= table.use :table %>

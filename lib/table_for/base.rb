@@ -2,8 +2,8 @@ require 'building-blocks'
 
 module TableFor
   class Base < BuildingBlocks::Base
-    alias columns block_positions
-    alias column use
+    alias columns queued_blocks
+    alias column queue
     
     def header(name, options={}, &block)
       define("#{name.to_s}_header", options, &block)
