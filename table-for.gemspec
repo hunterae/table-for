@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{table-for}
-  s.version = "0.0.17"
+  s.version = "1.0.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andrew Hunter"]
-  s.date = %q{2012-02-01}
+  s.date = %q{2012-02-04}
   s.description = %q{table-for is a table builder for an array of objects, easily allowing overriding of how any aspect of the table is generated}
   s.email = %q{hunterae@gmail.com}
   s.extra_rdoc_files = [
@@ -25,8 +25,8 @@ Gem::Specification.new do |s|
     "lib/table_for/engine.rb",
     "lib/table_for/view_additions.rb",
     "rails/init.rb",
-    "spec/spec_helper.rb",
-    "spec/table-for/table_for_spec.rb"
+    "spec/integration/table_for_spec.rb",
+    "spec/spec_helper.rb"
   ]
   s.homepage = %q{http://github.com/hunterae/table-for}
   s.require_paths = ["lib"]
@@ -38,23 +38,26 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<table-for>, [">= 0"])
-      s.add_runtime_dependency(%q<rails>, [">= 3.0.0"])
-      s.add_runtime_dependency(%q<building-blocks>, [">= 0.0.8"])
+      s.add_runtime_dependency(%q<rails>, ["= 3.1.0"])
+      s.add_runtime_dependency(%q<building-blocks>, [">= 1.0.0"])
+      s.add_development_dependency(%q<jeweler>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
     else
       s.add_dependency(%q<table-for>, [">= 0"])
-      s.add_dependency(%q<rails>, [">= 3.0.0"])
-      s.add_dependency(%q<building-blocks>, [">= 0.0.8"])
+      s.add_dependency(%q<rails>, ["= 3.1.0"])
+      s.add_dependency(%q<building-blocks>, [">= 1.0.0"])
+      s.add_dependency(%q<jeweler>, [">= 0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
     end
   else
     s.add_dependency(%q<table-for>, [">= 0"])
-    s.add_dependency(%q<rails>, [">= 3.0.0"])
-    s.add_dependency(%q<building-blocks>, [">= 0.0.8"])
+    s.add_dependency(%q<rails>, ["= 3.1.0"])
+    s.add_dependency(%q<building-blocks>, [">= 1.0.0"])
+    s.add_dependency(%q<jeweler>, [">= 0"])
     s.add_dependency(%q<jeweler>, [">= 0"])
     s.add_dependency(%q<jeweler>, [">= 0"])
     s.add_dependency(%q<jeweler>, [">= 0"])
