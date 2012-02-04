@@ -19,7 +19,6 @@ module TableFor
         if options[:sortable]
           order = options[:order] ? options[:order].to_s : column.name.to_s
           sort_class = (params[:order] != order || params[:sort_mode] == "reset") ? "sorting" : (params[:sort_mode] == "desc" ? "sorting_desc" : "sorting_asc")
-          header_html = {} if header_html.nil?
           header_html[:class] = (header_html[:class] ? "#{header_html[:class]} #{sort_class}" : sort_class)
         end
         header_html

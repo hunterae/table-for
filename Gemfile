@@ -12,7 +12,6 @@ end
 group :test do
   gem "rspec-rails", ">= 2.0.0.beta.20"
   gem 'mocha'
-  # gem 'rcov'
   gem 'xml-simple'
   gem 'supermodel'
   gem "sqlite3"

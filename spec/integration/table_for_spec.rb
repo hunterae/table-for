@@ -164,15 +164,78 @@ describe "table_for" do
   end
   
   describe "edit_header block" do
-    it "should be able to replace the edit_header block"
+    it "should be able to replace the edit_header block" do
+      @view.expects(:edit_user_path).with(User.first).returns("/users/1/edit")
+      buffer = @view.table_for @users[0,1] do |table|
+        table.define :edit_header do
+          "Edit"
+        end
+        table.column :edit
+      end
+
+      xml = XmlSimple.xml_in(%%
+        <table>
+          <thead><tr><th>Edit</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>
+                <a href="/users/1/edit">Edit</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>%)
+      XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
+    end
   end
 
   describe "delete_header block" do
-    it "should be able to replace the delete_header block"
+    it "should be able to replace the delete_header block" do
+      @view.expects(:user_path).with(User.first).returns("/users/1")
+      buffer = @view.table_for @users[0,1] do |table|
+        table.define :delete_header do
+          "Delete"
+        end
+        table.column :delete
+      end
+
+      xml = XmlSimple.xml_in(%%
+        <table>
+          <thead><tr><th>Delete</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>
+                <a href="/users/1" rel="nofollow" data-method="delete" data-confirm="Are you sure you want to delete this User?">Delete</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>%)
+      XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
+    end
   end
 
   describe "show_header block" do
-    it "should be able to replace the show_header block"
+    it "should be able to replace the show_header block" do
+      @view.expects(:user_path).with(User.first).returns("/users/1")
+      buffer = @view.table_for @users[0,1] do |table|
+        table.define :show_header do
+          "Show"
+        end
+        table.column :show
+      end
+
+      xml = XmlSimple.xml_in(%%
+        <table>
+          <thead><tr><th>Show</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>
+                <a href="/users/1">Show</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>%)
+      XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
+    end
   end
 
   describe "column header contents block" do
@@ -544,7 +607,22 @@ describe "table_for" do
   end
 
   describe "edit block" do
-    it "should be able to replace the edit block"
+    it "should be able to replace the edit block" do
+      buffer = @view.table_for @users[0,1] do |table|
+        table.define :edit do
+          "Edit Link"
+        end
+        table.column :edit
+      end
+
+      xml = XmlSimple.xml_in(%%
+        <table>
+          <thead><tr><th></th></tr></thead>
+          <tbody><tr><td>Edit Link</td></tr></tbody>
+        </table>%)
+      XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
+    end
+
     it "should be able to create an edit column" do
       @view.expects(:edit_user_path).with(User.first).returns("/users/1/edit")
 
@@ -622,7 +700,22 @@ describe "table_for" do
   end
 
   describe "show block" do
-    it "should be able to replace the show block"
+    it "should be able to replace the show block" do
+      buffer = @view.table_for @users[0,1] do |table|
+        table.define :show do
+          "Show Link"
+        end
+        table.column :show
+      end
+
+      xml = XmlSimple.xml_in(%%
+        <table>
+          <thead><tr><th></th></tr></thead>
+          <tbody><tr><td>Show Link</td></tr></tbody>
+        </table>%)
+      XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
+    end
+
     it "should be able to create a show column" do
       @view.expects(:user_path).with(User.first).returns("/users/1")
 
@@ -700,7 +793,22 @@ describe "table_for" do
   end
 
   describe "delete block" do
-    it "should be able to replace the delete block"
+    it "should be able to replace the delete block" do
+      buffer = @view.table_for @users[0,1] do |table|
+        table.define :delete do
+          "Delete Link"
+        end
+        table.column :delete
+      end
+
+      xml = XmlSimple.xml_in(%%
+        <table>
+          <thead><tr><th></th></tr></thead>
+          <tbody><tr><td>Delete Link</td></tr></tbody>
+        </table>%)
+      XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
+    end
+
     it "should be able to create a delete column" do
       @view.expects(:user_path).with(User.first).returns("/users/1")
 
@@ -806,8 +914,47 @@ describe "table_for" do
       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
     end
 
-    it "should be able to override the delete message for a delete link"
-    it "should be able to override the method for a delete link"
+    it "should be able to override the delete confirmation message for a delete link" do
+      @view.expects(:user_path).with(User.first).returns("/users/1")
+
+      buffer = @view.table_for @users[0,1] do |table|
+        table.column :delete, :confirm => "Are you sure?"
+      end
+
+      xml = XmlSimple.xml_in(%%
+        <table>
+          <thead><tr><th></th></tr></thead>
+          <tbody>
+            <tr>
+              <td>
+                <a href="/users/1" rel="nofollow" data-method="delete" data-confirm="Are you sure?">Delete</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>%)
+      XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
+    end
+
+    it "should be able to override the method for a delete link" do
+      @view.expects(:user_path).with(User.first).returns("/users/1")
+
+      buffer = @view.table_for @users[0,1] do |table|
+        table.column :delete, :method => :get
+      end
+
+      xml = XmlSimple.xml_in(%%
+        <table>
+          <thead><tr><th></th></tr></thead>
+          <tbody>
+            <tr>
+              <td>
+                <a href="/users/1" data-method="get" data-confirm="Are you sure you want to delete this User?">Delete</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>%)
+      XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
+    end
   end
 
   describe "column data contents block" do
