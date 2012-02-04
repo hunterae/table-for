@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andrew Hunter"]
-  s.date = %q{2012-01-20}
+  s.date = %q{2012-02-01}
   s.description = %q{table-for is a table builder for an array of objects, easily allowing overriding of how any aspect of the table is generated}
   s.email = %q{hunterae@gmail.com}
   s.extra_rdoc_files = [
@@ -23,8 +23,10 @@ Gem::Specification.new do |s|
     "lib/table-for.rb",
     "lib/table_for/base.rb",
     "lib/table_for/engine.rb",
-    "lib/table_for/helper_methods.rb",
-    "rails/init.rb"
+    "lib/table_for/view_additions.rb",
+    "rails/init.rb",
+    "spec/spec_helper.rb",
+    "spec/table-for/table_for_spec.rb"
   ]
   s.homepage = %q{http://github.com/hunterae/table-for}
   s.require_paths = ["lib"]
@@ -40,10 +42,12 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<building-blocks>, [">= 0.0.8"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
+      s.add_development_dependency(%q<jeweler>, [">= 0"])
     else
       s.add_dependency(%q<table-for>, [">= 0"])
       s.add_dependency(%q<rails>, [">= 3.0.0"])
       s.add_dependency(%q<building-blocks>, [">= 0.0.8"])
+      s.add_dependency(%q<jeweler>, [">= 0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
     end
@@ -51,6 +55,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<table-for>, [">= 0"])
     s.add_dependency(%q<rails>, [">= 3.0.0"])
     s.add_dependency(%q<building-blocks>, [">= 0.0.8"])
+    s.add_dependency(%q<jeweler>, [">= 0"])
     s.add_dependency(%q<jeweler>, [">= 0"])
     s.add_dependency(%q<jeweler>, [">= 0"])
   end

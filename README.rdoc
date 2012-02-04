@@ -7,57 +7,65 @@ Table-for is a table builder for a collection of domain objects. It very easily 
 In <b>Rails 3</b>, add this to your Gemfile.
 
   gem "table-for"
-  
+
+In this example, I'm going to assume the following setup:
+From the console, I have generated a user model with email, first_name, and last_name fields, and generated a scaffold on that model
+  rails g scaffold user email:string first_name:string last_name:string --no-stylesheets
+
+In seeds.rb:
+  User.create! :email => "andrew.hunter@livingsocial.com", :first_name => "Andrew", :last_name => "Hunter"
+  User.create! :email => "todd.fisher@livingsocial.com", :first_name => "Todd", :last_name => "Fisher"
+  User.create! :email => "jon.phillips@livingsocial.com", :first_name => "Jon", :last_name => "Phillips"
+
+In users_controller.rb (index action)
+  @users = User.all
+
 == Sample Usage
-
-Say we have fetched a collection of users from the database (stored as @users), in the view we can generate a very unique table with just a few lines of code:
-
-  <%= table_for @users, 
-              :table_html => {:id => "users"}, 
-              :header_html => {:style => "color:red"},
-              :row_html => {:class => lambda { |parameters| cycle('odd', 'even')}},
-              :column_html => {:style => "color:green"} do |table| %>
-    <%= table.column :name, :column_html => {:style => "color:blue"}, :header_html => {:style => "color:orange"} %>
-    <%= table.column :email %>
-    <%= table.column :phonenumber, :column_html => {:style => "color:orange"}, :header_html => {:style => "color:blue"} do |user| %>
-      <%= phonenumber(user.phonenumber) %>
+  <%= table_for @users, :table_html => {:style => "border: 1px solid black"},
+                        :sortable => true,
+                        :row_html => {:class => lambda { cycle('even', 'odd')},
+                                      :id => lambda {|user| "user-#{user.id}"}} do |table| %>
+    <%= table.column :edit %>
+    <%= table.column :show %>
+    <%= table.column :email, :label => "Email Address" %>
+    <%= table.column :label => "Full Name", :sortable => false, :header_html => {:style => "color:orange"} do |user| %>
+      <%= "#{user.first_name} #{user.last_name}" %>
     <% end %>
-    <%= table.column :label => "???" do |user| %>
-      Some Random Column
+    <%= table.column :delete %>
+  <% end %>
+
+== Specifying the columns to use
+  <%= table_for @users do |table| %>
+    <% table.column :email %>
+    <% table.column :first_name %>
+    <% table.column :last_name %>
+  <% end %>
+
+Here, each column will send its respective column name to the user object: user.send(:email), user.send(:first_name), user.send(:last_name),
+to determine what data to output in each column
+
+== Specifying the label to use for a column
+  <%= table_for @users do |table| %>
+    <% table.column :email, :label => "Email Address" %>
+  <% end %>
+
+== Overridding the default way or rendering a column
+  <%= table_for @users do |table| %>
+    <% table.column :name do |user| %>
+      <%= "#{user.first_name} #{user.last_name}" %>
     <% end %>
   <% end %>
-  
-Will generate the following table:
-  <table id="users">
-    <thead>
-      <tr>
-        <th style="color:orange">Name</th>    
-        <th style="color:red">Email</th>    
-        <th style="color:blue">Phonenumber</th>    
-        <th style="color:red">???</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr class="odd">
-        <td style="color:blue">USER 1'S NAME</td>    
-        <td style="color:green">USER 1'S EMAIL</td>    
-        <td style="color:orange">USER 1'S PHONENUMBER</td>    
-        <td style="color:green">Some Random Column</td>
-      </tr>
-      <tr class="even">
-        <td style="color:blue">USER 2'S NAME</td>    
-        <td style="color:green">USER 2'S </td>    
-        <td style="color:orange">USER 2'S PHONENUMBER</td>   
-        <td style="color:green">Some Random Column</td>
-      </tr>
-      ...
-      <tr class="odd">
-        <td style="color:blue">LAST USER'S NAME</td>    
-        <td style="color:green">LAST USER'S EMAIL</td>    
-        <td style="color:orange">LAST USER'S PHONENUMBER</td>    
-        <td style="color:green">Some Random Column</td>
-      </tr>
-    </tbody>
-  </table>
-  
-Notice in the above example, we were able to provide the default attributes to be applied to each column, header, and row. Then, when specifying which columns to render, the column and header attributes could be overridden on a column by column basis.
+
+Here, since the name of the column is not used anymore to determine what data to output, this code could be changed to:
+  <%= table_for @users do |table| %>
+    <% table.column :full_name do |user| %>
+      <%= "#{user.first_name} #{user.last_name}" %>
+    <% end %>
+  <% end %>
+
+Or the block name could have been removed altogether and replaced with a label as follows:
+  <%= table_for @users do |table| %>
+    <% table.column :label => "Full Name" do |user| %>
+      <%= "#{user.first_name} #{user.last_name}" %>
+    <% end %>
+  <% end %>
