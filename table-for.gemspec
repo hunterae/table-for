@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{table-for}
-  s.version = "1.0.0"
+  s.version = "1.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andrew Hunter"]
@@ -47,10 +47,12 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<jeweler>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
+      s.add_development_dependency(%q<jeweler>, [">= 0"])
     else
       s.add_dependency(%q<table-for>, [">= 0"])
       s.add_dependency(%q<rails>, [">= 3.0.0"])
       s.add_dependency(%q<building-blocks>, [">= 1.0.0"])
+      s.add_dependency(%q<jeweler>, [">= 0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
@@ -61,6 +63,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<table-for>, [">= 0"])
     s.add_dependency(%q<rails>, [">= 3.0.0"])
     s.add_dependency(%q<building-blocks>, [">= 1.0.0"])
+    s.add_dependency(%q<jeweler>, [">= 0"])
     s.add_dependency(%q<jeweler>, [">= 0"])
     s.add_dependency(%q<jeweler>, [">= 0"])
     s.add_dependency(%q<jeweler>, [">= 0"])
