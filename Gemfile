@@ -2,7 +2,7 @@ source "http://rubygems.org"
 
 gemspec
 
-gem 'rails', "3.1.0"
+gem 'rails', ">= 3.0.0"
 gem 'building-blocks', ">= 1.0.0"
 
 group :development do
