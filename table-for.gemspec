@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
     "README.rdoc"
   ]
   s.files = [
+    "CHANGELOG.rdoc",
     "README.rdoc",
     "Rakefile",
     "VERSION",
@@ -26,7 +27,8 @@ Gem::Specification.new do |s|
     "lib/table_for/view_additions.rb",
     "rails/init.rb",
     "spec/integration/table_for_spec.rb",
-    "spec/spec_helper.rb"
+    "spec/spec_helper.rb",
+    "spec/table_for/view_additions_spec.rb"
   ]
   s.homepage = %q{http://github.com/hunterae/table-for}
   s.require_paths = ["lib"]
@@ -38,16 +40,18 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<table-for>, [">= 0"])
-      s.add_runtime_dependency(%q<rails>, ["= 3.1.0"])
+      s.add_runtime_dependency(%q<rails>, [">= 3.0.0"])
       s.add_runtime_dependency(%q<building-blocks>, [">= 1.0.0"])
+      s.add_development_dependency(%q<jeweler>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
     else
       s.add_dependency(%q<table-for>, [">= 0"])
-      s.add_dependency(%q<rails>, ["= 3.1.0"])
+      s.add_dependency(%q<rails>, [">= 3.0.0"])
       s.add_dependency(%q<building-blocks>, [">= 1.0.0"])
+      s.add_dependency(%q<jeweler>, [">= 0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
@@ -55,8 +59,9 @@ Gem::Specification.new do |s|
     end
   else
     s.add_dependency(%q<table-for>, [">= 0"])
-    s.add_dependency(%q<rails>, ["= 3.1.0"])
+    s.add_dependency(%q<rails>, [">= 3.0.0"])
     s.add_dependency(%q<building-blocks>, [">= 1.0.0"])
+    s.add_dependency(%q<jeweler>, [">= 0"])
     s.add_dependency(%q<jeweler>, [">= 0"])
     s.add_dependency(%q<jeweler>, [">= 0"])
     s.add_dependency(%q<jeweler>, [">= 0"])
