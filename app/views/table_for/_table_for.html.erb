@@ -1,31 +1,31 @@
 <% table.define :table do |options| %>
   <%= content_tag :table, options[:table_html] do %>
-    <%= table.use :thead %>
-    <%= table.use :tbody %>
+    <%= table.render :thead %>
+    <%= table.render :tbody %>
   <% end %>
 <% end %>
 
 <% table.define :thead do |options| %>
   <%= content_tag :thead, options[:thead_html] do %>
-    <%= table.use :header_row %>
+    <%= table.render :header_row %>
   <% end %>
 <% end %>
 
 <% table.define :header_row do |options| %>
   <%= content_tag :tr, options[:header_row_html] do %>
-    <%= table.use :header_columns %>
+    <%= table.render :header_columns %>
   <% end %>
 <% end %>
 
 <% table.define :header_columns do |options| %>
   <% table.columns.each do |column| %>
-    <%= table.use :header_column, column, column.options %>
+    <%= table.render :header_column, column, column.options %>
   <% end %>
 <% end %>
 
 <% table.define :header_column do |column, options| %>
   <%= content_tag :th, table_for_header_html(column, options) do %>
-    <%= table.use "#{column.name}_header", column, column.options %>
+    <%= table.render "#{column.name}_header", column, column.options %>
   <% end %>
 <% end %>
 
@@ -47,31 +47,31 @@
 
 <% table.define :tbody do |options| %>
   <%= content_tag :tbody, options[:tbody_html] do %>
-    <%= table.use :rows %>
+    <%= table.render :rows %>
   <% end %>
 <% end %>
 
 <% table.define :rows do |options| %>
   <% records.each do |record| %>
-    <%= table.use :row, record %>
+    <%= table.render :row, record %>
   <% end %>
 <% end %>
 
 <% table.define :row do |record, options| %>
   <%= content_tag :tr, table_for_evaluated_options(record, options[:row_html]) do %>
-    <%= table.use :columns, record %>
+    <%= table.render :columns, record %>
   <% end %>
 <% end %>
 
 <% table.define :columns do |record, options| %>
   <% table.columns.each do |column| %>
-    <%= table.use :column, record, column, column.options %>
+    <%= table.render :column, record, column, column.options %>
   <% end %>
 <% end %>
 
 <% table.define :column do |record, column, options| %>
   <%= content_tag :td, table_for_evaluated_options(record, column, options[:column_html]) do %>
-    <%= table.use column.name, record, column, column.options %>
+    <%= table.render column.name, record, column, column.options %>
   <% end %>
 <% end %>
 
@@ -95,4 +95,4 @@
   <% end %>
 <% end %>
 
-<%= table.use :table %>
+<%= table.render :table %>

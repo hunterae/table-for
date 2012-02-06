@@ -11,33 +11,33 @@ describe TableFor::ViewAdditions do
   end
 
   describe "table_for method" do
-    it "should call render on the TableFor::Base instance" do
-      TableFor::Base.expects(:new).returns(mock(:render => ""))
+    it "should call render_template on the TableFor::Base instance" do
+      TableFor::Base.expects(:new).returns(mock(:render_template => ""))
       @view.table_for(@records)
     end
 
     it "should pass the view as the first parameter to TableFor::Base initialization" do
-      TableFor::Base.expects(:new).with {|view, options| view == @view}.returns(mock(:render => ""))
+      TableFor::Base.expects(:new).with {|view, options| view == @view}.returns(mock(:render_template => ""))
       @view.table_for(@records)
     end
 
     it "should default the template to render" do
-      TableFor::Base.expects(:new).with {|view, options| options[:template] == "table_for/table_for"}.returns(mock(:render => ""))
+      TableFor::Base.any_instance.expects(:render_template).with {|template| template == "table_for/table_for"}.returns("")
       @view.table_for(@records)
     end
 
     it "should default the variable to 'table' to render" do
-      TableFor::Base.expects(:new).with {|view, options| options[:variable] == "table"}.returns(mock(:render => ""))
+      TableFor::Base.expects(:new).with {|view, options| options[:variable] == "table"}.returns(mock(:render_template => ""))
       @view.table_for(@records)
     end
 
     it "should default the records to the collection passed in" do
-      TableFor::Base.expects(:new).with {|view, options| options[:records] == @records}.returns(mock(:render => ""))
+      TableFor::Base.expects(:new).with {|view, options| options[:records] == @records}.returns(mock(:render_template => ""))
       @view.table_for(@records)
     end
 
     it "should add any runtime options to the options initialized for TableFor::Base" do
-      TableFor::Base.expects(:new).with {|view, options| options[:option1] == 1 && options[:option2] == "2"}.returns(mock(:render => ""))
+      TableFor::Base.expects(:new).with {|view, options| options[:option1] == 1 && options[:option2] == "2"}.returns(mock(:render_template => ""))
       @view.table_for(@records, :option1 => 1, :option2 => "2")
     end
   end

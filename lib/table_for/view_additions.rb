@@ -2,11 +2,7 @@ module TableFor
   module ViewAdditions
     module ClassMethods
       def table_for(records, options={}, &block)
-        options[:records] = records
-        options[:template] = "table_for/table_for"
-        options[:variable] = "table"
-
-        TableFor::Base.new(self, options, &block).render
+        TableFor::Base.new(self, options.merge(:variable => "table", :records => records)).render_template("table_for/table_for", &block)
       end
 
       def table_for_evaluated_options(*args)

@@ -3,13 +3,10 @@ source "http://rubygems.org"
 gemspec
 
 gem 'rails', ">= 3.0.0"
-gem 'building-blocks', ">= 1.0.0"
+gem 'building-blocks', ">= 1.2.0"
 
 group :development do
   gem 'jeweler'
-end
-
-group :test do
   gem "rspec-rails", ">= 2.0.0.beta.20"
   gem 'mocha'
   gem 'xml-simple'
@@ -17,4 +14,3 @@ group :test do
   gem "sqlite3"
   gem "with_model"
 end
-
