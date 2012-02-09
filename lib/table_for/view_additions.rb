@@ -2,6 +2,7 @@ module TableFor
   module ViewAdditions
     module ClassMethods
       def table_for(records, options={}, &block)
+        options[:use_partials_for_before_and_after_hooks] = false
         TableFor::Base.new(self, options.merge(:variable => "table", :records => records)).render_template("table_for/table_for", &block)
       end
 

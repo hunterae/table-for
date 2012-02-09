@@ -22,19 +22,19 @@ In users_controller.rb (index action)
 
 == Sample Usage
   <%= table_for @users, :table_html => {:style => "border: 1px solid black"},
-                        :sortable => true,
+                        :sortable => true, :sort_url => users_path,
                         :row_html => {:class => lambda { cycle('even', 'odd')},
                                       :id => lambda {|user| "user-#{user.id}"}} do |table| %>
-    <%= table.column :edit %>
+    <%= table.column :edit, :link_label => "Modify" %>
     <%= table.column :show %>
     <%= table.column :email, :label => "Email Address" %>
     <%= table.column :label => "Full Name", :sortable => false, :header_html => {:style => "color:orange"} do |user| %>
       <%= "#{user.first_name} #{user.last_name}" %>
     <% end %>
-    <%= table.column :delete %>
+    <%= table.column :delete, :confirm => "Are you sure?" %>
   <% end %>
 
-== Specifying the columns to use
+== Specifying the Columns to Use
   <%= table_for @users do |table| %>
     <% table.column :email %>
     <% table.column :first_name %>
@@ -42,30 +42,91 @@ In users_controller.rb (index action)
   <% end %>
 
 Here, each column will send its respective column name to the user object: user.send(:email), user.send(:first_name), user.send(:last_name),
-to determine what data to output in each column
+to determine what data to output in each column.
 
-== Specifying the label to use for a column
+== Specifying the Label to Use for a Column
   <%= table_for @users do |table| %>
     <% table.column :email, :label => "Email Address" %>
   <% end %>
 
-== Overridding the default way or rendering a column
+== Overriding the Default Way of Rendering a Column
   <%= table_for @users do |table| %>
     <% table.column :name do |user| %>
       <%= "#{user.first_name} #{user.last_name}" %>
     <% end %>
   <% end %>
 
-Here, since the name of the column is not used anymore to determine what data to output, this code could be changed to:
+  <!-- Or, since the name of the column is no longer used to figure out what data to render: -->
   <%= table_for @users do |table| %>
     <% table.column :full_name do |user| %>
       <%= "#{user.first_name} #{user.last_name}" %>
     <% end %>
   <% end %>
 
-Or the block name could have been removed altogether and replaced with a label as follows:
+  <!-- Or the block name could be removed altogether and replaced with a label: -->
   <%= table_for @users do |table| %>
     <% table.column :label => "Full Name" do |user| %>
       <%= "#{user.first_name} #{user.last_name}" %>
     <% end %>
+  <% end %>
+
+== Specifying Sortability
+  <!-- Globally: -->
+  <%= table_for @users, :sortable => true, :sort_url => users_path do |table| %>
+    <% table.column :id, :sortable => false %>
+    <% table.column :email %>
+    <% table.column :name, :order => "first_name,last_name" do |user| %>
+      <%= "#{user.first_name} #{user.last_name}" %>
+    <% end %>
+  <% end %>
+
+  <!-- Column by column basis: -->
+  <%= table_for @users, :sort_url => users_path do |table| %>
+    <% table.column :id %>
+    <% table.column :email, :sortable => true %>
+    <% table.column :name, :order => "first_name,last_name", :sortable => true do |user| %>
+      <%= "#{user.first_name} #{user.last_name}" %>
+    <% end %>
+  <% end %>
+
+== Specifying the Table HTML
+  <%= table_for @users, :table_html => {:class => "table-for-table", :style => "border:1px solid black"} %>
+
+== Specifying the Row HTML
+  <!-- Header row -->
+  <%= table_for @users, :header_row_html => {:style => "background-color:blue", :class => "table-header"} do |table| %>
+    <% table.column :email %>
+  <% end %>
+
+  <!-- Data rows -->
+  <%= table_for @users, :row_html => {:style => "background-color:blue",
+                                      :class => lambda {"table-row #{cycle('even', 'odd')}"},
+                                      :id => lambda {|user| "user-#{user.id}"}} do |table| %>
+    <% table.column :email %>
+  <% end %>
+
+== Specifying the Column HTML
+  <!-- Header columns -->
+  <%= table_for @users, :header_html => {:class => lambda {|column| "header-column #{column.name}"} } do |table| %>
+    <!-- Override this columns' header's html -->
+    <% table.column :email, :header_html => {:style => "color: red"} %>
+
+    <% table.column :first_name %>
+    <% table.column :last_name %>
+  <% end %>
+
+  <!-- Data columns -->
+  <%= table_for @users, :column_html => {:class => lambda {|column| "data-column #{column.name}"} } do |table| %>
+    <!-- Override this column's html -->
+    <% table.column :email, :column_html => {:style => "background-color: red"} %>
+
+    <% table.column :first_name %>
+    <% table.column :last_name %>
+  <% end %>
+
+== Using Show, Edit, and Delete Columns
+  <%= table_for @users do |table| %>
+    <% table.column :edit, :url => lambda {|user| edit_user_path(user) } %>
+    <% table.column :show %>
+    <% table.column :show %>
   <% end %>
