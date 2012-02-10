@@ -3,7 +3,7 @@ source "http://rubygems.org"
 gemspec
 
 gem 'rails', ">= 3.0.0"
-gem 'building-blocks', ">= 1.2.0"
+gem 'building-blocks', ">= 1.2.3"
 
 group :development do
   gem 'jeweler'

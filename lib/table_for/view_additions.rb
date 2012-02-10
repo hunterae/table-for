@@ -6,13 +6,8 @@ module TableFor
         TableFor::Base.new(self, options.merge(:variable => "table", :records => records)).render_template("table_for/table_for", &block)
       end
 
-      def table_for_evaluated_options(*args)
-        options = args.extract_options!
-        options.inject({}) { |hash, (k, v)| hash[k] = (v.is_a?(Proc) ? v.call(*args) : v); hash} unless options.nil?
-      end
-
-      def table_for_header_html(column, options={})
-        header_html = table_for_evaluated_options(column, options[:header_html])
+      def table_for_header_html(table, column, options={})
+        header_html = table.evaluated_procs(column, options[:header_html])
         if options[:sortable]
           order = options[:order] ? options[:order].to_s : column.name.to_s
           sort_class = (params[:order] != order || params[:sort_mode] == "reset") ? "sorting" : (params[:sort_mode] == "desc" ? "sorting_desc" : "sorting_asc")

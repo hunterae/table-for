@@ -24,7 +24,7 @@
 <% end %>
 
 <% table.define :header_column do |column, options| %>
-  <%= content_tag :th, table_for_header_html(column, options) do %>
+  <%= content_tag :th, table_for_header_html(table, column, options) do %>
     <%= table.render "#{column.name}_header", column, column.options %>
   <% end %>
 <% end %>
@@ -58,7 +58,7 @@
 <% end %>
 
 <% table.define :row do |record, options| %>
-  <%= content_tag :tr, table_for_evaluated_options(record, options[:row_html]) do %>
+  <%= content_tag :tr, table.evaluated_procs(record, options[:row_html]) do %>
     <%= table.render :columns, record %>
   <% end %>
 <% end %>
@@ -70,23 +70,23 @@
 <% end %>
 
 <% table.define :column do |record, column, options| %>
-  <%= content_tag :td, table_for_evaluated_options(record, column, options[:column_html]) do %>
+  <%= content_tag :td, table.evaluated_procs(record, column, options[:column_html]) do %>
     <%= table.render column.name, record, column, column.options %>
   <% end %>
 <% end %>
 
 <% table.define :edit, :action => :edit, :link_label => "Edit" do |record, column, options| %>
-  <% url = options[:url] ? options[:url].call(record) : [options[:action], options[:scope], record].flatten %>
+  <% url = options[:url] ? table.evaluated_proc(record, options[:url]) : [options[:action], options[:scope], record].flatten %>
   <%= link_to options[:link_label], url, options[:link_html] %>
 <% end %>
 
 <% table.define :show, :action => nil, :link_label => "Show" do |record, column, options| %>
-  <% url = options[:url] ? options[:url].call(record) : [options[:action], options[:scope], record].flatten %>
+  <% url = options[:url] ? table.evaluated_proc(record, options[:url]) : [options[:action], options[:scope], record].flatten %>
   <%= link_to options[:link_label], url, options[:link_html] %>
 <% end %>
 
 <% table.define :delete, :action => nil, :link_html => {}, :link_label => "Delete" do |record, column, options| %>
-  <% url = options[:url] ? options[:url].call(record) : [options[:action], options[:scope], record].flatten %>
+  <% url = options[:url] ? table.evaluated_proc(record, options[:url]) : [options[:action], options[:scope], record].flatten %>
   <% confirm = options[:confirm] ? options[:confirm] : "Are you sure you want to delete this #{record.class.to_s.titleize}?" %>
   <% method = options[:method] ? options[:method] : "delete" %>
   <%= link_to options[:link_label], url, {:method => method, :confirm => confirm}.merge(options[:link_html]) %>
