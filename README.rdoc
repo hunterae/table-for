@@ -110,7 +110,6 @@ to determine what data to output in each column.
   <%= table_for @users, :header_html => {:class => lambda {|column| "header-column #{column.name}"} } do |table| %>
     <!-- Override this columns' header's html -->
     <% table.column :email, :header_html => {:style => "color: red"} %>
-
     <% table.column :first_name %>
     <% table.column :last_name %>
   <% end %>
@@ -119,14 +118,80 @@ to determine what data to output in each column.
   <%= table_for @users, :column_html => {:class => lambda {|column| "data-column #{column.name}"} } do |table| %>
     <!-- Override this column's html -->
     <% table.column :email, :column_html => {:style => "background-color: red"} %>
-
     <% table.column :first_name %>
     <% table.column :last_name %>
   <% end %>
 
 == Using Show, Edit, and Delete Columns
   <%= table_for @users do |table| %>
+    <!-- Standard show link -->
+    <% table.column :show %>
+
+    <!-- Specify the controller action for the show link (used for generating the link) -->
+    <% table.column :show, :action => :display %>
+
+    <!-- Standard edit link -->
+    <% table.column :edit %>
+
+    <!-- Specify the text for the edit link -->
+    <% table.column :edit, :link_label => "Modify" %>
+
+    <!-- Specify the url for the edit link -->
     <% table.column :edit, :url => lambda {|user| edit_user_path(user) } %>
-    <% table.column :show %>
-    <% table.column :show %>
+
+    <!-- Specify the controller action for the edit link (used for generating the link) -->
+    <% table.column :edit, :action => :modify %>
+
+    <!-- Specify the scope for the edit link (i.e. for nested resources) -->
+    <% table.column :edit, :scope => :admin %>
+
+    <!-- Specify the confirmation message for the confirm link -->
+    <% table.column :delete, :confirm => "Are you sure???" %>
+  <% end %>
+
+== Using "Before" and "After" hooks
+  <!-- Adding a table footer -->
+  <%= table_for @users do |table| %>
+    <% table.column :email %>
+    <% table.after :tbody do %>
+      <tfoot><tr><td colspan="<%= table.columns.length %>">My Footer</td></tr></tfoot>
+    <% end %>
+  <% end %>
+
+  <!-- Evaluating an expression before each row renders -->
+  <%= table_for @users do |table| %>
+    <% table.before :row do |user| %>
+      <!-- Perform some calculation -->
+      <% @evaluated_data = user.do_some_method %>
+    <% end %>
+    <% table.column :label => "First Column" do |user| %>
+      <!-- Use the stored value in some way -->
+      <%= @evaluated_data.method_1 %>
+    <% end %>
+    <% table.column :label => "Second Column" do |user| %>
+      <!-- Use the stored value in some other way -->
+      <%= @evaluated_data.method_2 %>
+    <% end %>
+  <% end %>
+
+  <!-- Adding a row before all the data rows -->
+  <%= table_for @users do |table| %>
+    <% table.before :rows do %>
+      <tr><td colspan="<%= table.columns.length %>">My First Row</td></tr>
+    <% end %>
+    <% table.column :email %>
+  <% end %>
+
+== Changing the Default Way table_for Renders
+  <!-- Don't render thead and tbody tags -->
+  <%= table_for @users do |table| %>
+    <% table.define :table do |options| %>
+      <%= content_tag :table, options[:table_html] do %>
+        <!-- Instead of table.render :thead, do this -->
+        <%= table.render :header_row %>
+        <!-- Instead of table.render :tbody, do this -->
+        <%= table.render :rows %>
+      <% end %>
+    <% end %>
+    <% table.column :email %>
   <% end %>

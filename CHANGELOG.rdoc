@@ -1,13 +1,13 @@
-1.1.0 (February 4, 2012)
-
-* Removed dependency on rails 3.1, switched to >= 3.0.0
-
-1.2.0 (February 5, 2012)
-
-* Upgraded dependency on BuildingBlocks to at least version 1.2.0
-
 1.2.1 (February 9, 2012)
 
 * Moved table_for_evaluated_options method into BuildingBlocks gem and renamed to evaluated_procs
 * Also now utilizing a method created in BuildingBlocks called evaluated_proc
 * The url for an edit, show, and delete link can now be a Proc that takes the current row's domain object as a paramter
+
+1.2.0 (February 5, 2012)
+
+* Upgraded dependency on BuildingBlocks to at least version 1.2.0
+
+1.1.0 (February 4, 2012)
+
+* Removed dependency on rails 3.1, switched to >= 3.0.0
