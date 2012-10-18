@@ -1,11 +1,13 @@
 <% table.define :table do |options| %>
   <%= content_tag :table, options[:table_html] do %>
-    <%= table.render :thead %>
-    <%= table.render :tbody %>
+    <%= table.render :header %>
+    <%= table.render :body %>
+    <%# Purposely no default implementation for the tfoot block given, since most tables do not have footers. Block provided to for easy hook to add a footer %>
+    <%= table.render :footer %>
   <% end %>
 <% end %>
 
-<% table.define :thead do |options| %>
+<% table.define :header do |options| %>
   <%= content_tag :thead, options[:thead_html] do %>
     <%= table.render :header_row %>
   <% end %>
@@ -13,13 +15,7 @@
 
 <% table.define :header_row do |options| %>
   <%= content_tag :tr, options[:header_row_html] do %>
-    <%= table.render :header_columns %>
-  <% end %>
-<% end %>
-
-<% table.define :header_columns do |options| %>
-  <% table.columns.each do |column| %>
-    <%= table.render :header_column, column, column.options %>
+    <%= table.render :header_column, :collection => table.columns %>
   <% end %>
 <% end %>
 
@@ -29,73 +25,59 @@
   <% end %>
 <% end %>
 
-<% table.define :edit_header do %><% end %>
+<%# Define header blocks for the edit, show, and delete columns (i.e. we want those columns to display with a blank header) %>
+<% table.define(:edit_header) {} %>
+<% table.define(:show_header) {} %>
+<% table.define(:delete_header) {} %>
 
-<% table.define :show_header do %><% end %>
-
-<% table.define :delete_header do %><% end %>
-
-<% table.columns.each do |column| %>
-  <% table.define "#{column.name}_header" do |column, options| %>
-    <% if options[:sortable] %>
-      <%= table_for_sort_link(column, options) %>
-    <% else %>
-      <%= options[:label] ? options[:label] : column.name.to_s.titleize %>
-    <% end %>
+<%# Define a header block for each column, named using that column's name with the word "_header" appended to it %>
+<% table.define lambda {|column| "#{column.name}_header" }, :collection => table.columns do |column, options| %>
+  <% if options[:sortable] %>
+    <%= table_for_sort_link(column, options) %>
+  <% else %>
+    <%= options[:label] ? options[:label] : column.name.to_s.titleize %>
   <% end %>
 <% end %>
 
-<% table.define :tbody do |options| %>
+<% table.define :body do |options| %>
   <%= content_tag :tbody, options[:tbody_html] do %>
-    <%= table.render :rows %>
-  <% end %>
-<% end %>
-
-<% table.define :rows do |options| %>
-  <% records.each do |record| %>
-    <%= table.render :row, record %>
+    <%= table.render :row, :collection => records %>
   <% end %>
 <% end %>
 
 <% table.define :row do |record, options| %>
-  <%= content_tag :tr, table.evaluated_procs(record, options[:row_html]) do %>
-    <%= table.render :columns, record %>
+  <% table.set_current_record(record) %>
+  <%= content_tag :tr, table.evaluated_procs(options[:row_html], record) do %>
+    <%= table.render :column, record, :collection => table.columns %>
   <% end %>
 <% end %>
 
-<% table.define :columns do |record, options| %>
-  <% table.columns.each do |column| %>
-    <%= table.render :column, record, column, column.options %>
-  <% end %>
-<% end %>
-
-<% table.define :column do |record, column, options| %>
-  <%= content_tag :td, table.evaluated_procs(record, column, options[:column_html]) do %>
+<% table.define :column do |column, record, options| %>
+  <%= content_tag :td, table.evaluated_procs(options[:column_html], record, column) do %>
     <%= table.render column.name, record, column, column.options %>
   <% end %>
 <% end %>
 
 <% table.define :edit, :action => :edit, :link_label => "Edit" do |record, column, options| %>
-  <% url = options[:url] ? table.evaluated_proc(record, options[:url]) : [options[:action], options[:scope], record].flatten %>
+  <% url = options[:url] ? table.evaluated_proc(options[:url], record) : [options[:action], options[:scope], record].flatten %>
   <%= link_to options[:link_label], url, options[:link_html] %>
 <% end %>
 
 <% table.define :show, :action => nil, :link_label => "Show" do |record, column, options| %>
-  <% url = options[:url] ? table.evaluated_proc(record, options[:url]) : [options[:action], options[:scope], record].flatten %>
+  <% url = options[:url] ? table.evaluated_proc(options[:url], record) : [options[:action], options[:scope], record].flatten %>
   <%= link_to options[:link_label], url, options[:link_html] %>
 <% end %>
 
 <% table.define :delete, :action => nil, :link_html => {}, :link_label => "Delete" do |record, column, options| %>
-  <% url = options[:url] ? table.evaluated_proc(record, options[:url]) : [options[:action], options[:scope], record].flatten %>
+  <% url = options[:url] ? table.evaluated_proc(options[:url], record) : [options[:action], options[:scope], record].flatten %>
   <% confirm = options[:confirm] ? options[:confirm] : "Are you sure you want to delete this #{record.class.to_s.titleize}?" %>
   <% method = options[:method] ? options[:method] : "delete" %>
   <%= link_to options[:link_label], url, {:method => method, :confirm => confirm}.merge(options[:link_html]) %>
 <% end %>
 
-<% table.columns.each do |column| %>
-  <% table.define "#{column.name}" do |record, column, options| %>
-    <%= record.send(column.name) %>
-  <% end %>
+<%# Define a block for each column, named using that column's name %>
+<% table.define lambda {|column| column.name }, :collection => table.columns do |record, column, options| %>
+  <%= record.send(column.name) %>
 <% end %>
 
 <%= table.render :table %>

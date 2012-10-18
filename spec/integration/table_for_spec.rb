@@ -57,16 +57,16 @@ describe "table_for" do
     end
   end
 
-  describe "thead block" do
+  describe "header block" do
     it "should be able to replace the thead block" do
       buffer = @view.table_for @users[0,1] do |table|
-        table.define :thead do
-          "<thead><tr><th>My new thead definition</th></tr></thead>".html_safe
+        table.define :header do
+          "<thead><tr><th>My new header definition</th></tr></thead>".html_safe
         end
         table.column :first_name
       end
 
-      xml = XmlSimple.xml_in(%%<table><thead><tr><th>My new thead definition</th></tr></thead><tbody><tr><td>Andrew</td></tr></tbody></table>%)
+      xml = XmlSimple.xml_in(%%<table><thead><tr><th>My new header definition</th></tr></thead><tbody><tr><td>Andrew</td></tr></tbody></table>%)
       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
     end
 
@@ -95,20 +95,6 @@ describe "table_for" do
         table.column :first_name
       end
       xml = XmlSimple.xml_in(%%<table><thead><tr style="background-color: orange"><th>First Name</th></tr></thead><tbody><tr><td>Andrew</td></tr></tbody></table>%)
-      XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-    end
-  end
-
-  describe "header_columns block" do
-    it "should be able to replace the header_columns block" do
-      buffer = @view.table_for @users[0,1] do |table|
-        table.define :header_columns do
-          "<th>Column 1</th><th>Column 2</th>".html_safe
-        end
-        table.column :first_name
-      end
-
-      xml = XmlSimple.xml_in(%%<table><thead><tr><th>Column 1</th><th>Column 2</th></tr></thead><tbody><tr><td>Andrew</td></tr></tbody></table>%)
       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
     end
   end
@@ -432,40 +418,22 @@ describe "table_for" do
     end
   end
 
-  describe "tbody block" do
-    it "should be able to replace the tbody block" do
+  describe "body block" do
+    it "should be able to replace the body block" do
       buffer = @view.table_for @users[0,1] do |table|
-        table.define :tbody do
-          "<tbody><tr><td>My new tbody definition</td></tr></tbody>".html_safe
+        table.define :body do
+          "<tbody><tr><td>My new body definition</td></tr></tbody>".html_safe
         end
         table.column :first_name
       end
 
-      xml = XmlSimple.xml_in(%%<table><thead><tr><th>First Name</th></tr></thead><tbody><tr><td>My new tbody definition</td></tr></tbody></table>%)
+      xml = XmlSimple.xml_in(%%<table><thead><tr><th>First Name</th></tr></thead><tbody><tr><td>My new body definition</td></tr></tbody></table>%)
       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
     end
 
     it "should be able to specify html attributes" do
       buffer = @view.table_for @users[0,1], :tbody_html => {:style => "background-color: orange"}
       xml = XmlSimple.xml_in(%%<table><thead><tr></tr></thead><tbody style="background-color: orange"><tr></tr></tbody></table>%)
-      XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-    end
-  end
-
-  describe "rows block" do
-    it "should be able to replace the rows block" do
-      buffer = @view.table_for @users do |table|
-        table.define :rows do
-          "<tr><td>There are #{@users.length} rows</td></tr><tr><td>This is the next row</td></tr>".html_safe
-        end
-        table.column :first_name
-      end
-
-      xml = XmlSimple.xml_in(%%
-        <table>
-          <thead><tr><th>First Name</th></tr></thead>
-          <tbody><tr><td>There are 3 rows</td></tr><tr><td>This is the next row</td></tr></tbody>
-        </table>%)
       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
     end
   end
@@ -510,30 +478,10 @@ describe "table_for" do
     end
   end
 
-  describe "columns block" do
-    it "should be able to replace the columns block" do
-      buffer = @view.table_for @users[0, 1] do |table|
-        table.define :columns do |user|
-          table.columns.map {|column| "<td>Value: #{user.send(column.name) if user.respond_to?(column.name)}</td>"}.join("").html_safe
-        end
-        table.column :first_name
-        table.column :last_name
-        table.column :some_random_column
-      end
-
-      xml = XmlSimple.xml_in(%%
-        <table>
-          <thead><tr><th>First Name</th><th>Last Name</th><th>Some Random Column</th></tr></thead>
-          <tbody><tr><td>Value: Andrew</td><td>Value: Hunter</td><td>Value:</td></tr></tbody>
-        </table>%)
-      XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-    end
-  end
-
   describe "column block" do
     it "should be able to replace the columns block" do
       buffer = @view.table_for @users[0, 1] do |table|
-        table.define :column do |user, column, options|
+        table.define :column do |column, user, options|
           "<td>#{column.name.to_s.titleize} value is #{user.send(column.name)}</td>".html_safe
         end
         table.column :email

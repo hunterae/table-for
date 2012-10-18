@@ -1,3 +1,12 @@
+2.0.0 (October 18, 2012)
+* Upgraded to BuildingBlocks 2.0.0
+* Renamed thead block to header, tbody to body, add added an empty footer block to the default table implementation
+* Utilized features from BuildingBlocks 2.0.0, such as collection declaration of blocks, and collection rendering of blocks
+* Current record being iterated over no longer needs to be passed in as a parameter to the block, but can be accessed via the table.current_record, such as:
+  <% table.column do %>
+    <%= table.current_record.name %>
+  <% end %>
+
 1.2.1 (February 9, 2012)
 
 * Moved table_for_evaluated_options method into BuildingBlocks gem and renamed to evaluated_procs

@@ -2,12 +2,11 @@ module TableFor
   module ViewAdditions
     module ClassMethods
       def table_for(records, options={}, &block)
-        options[:use_partials_for_before_and_after_hooks] = false
-        TableFor::Base.new(self, options.merge(:variable => "table", :records => records)).render_template("table_for/table_for", &block)
+        TableFor::Base.new(self, options.merge(:variable => "table", :records => records, :use_partials => false)).render_template("table_for/table_for", &block)
       end
 
       def table_for_header_html(table, column, options={})
-        header_html = table.evaluated_procs(column, options[:header_html])
+        header_html = table.evaluated_procs(options[:header_html], column)
         if options[:sortable]
           order = options[:order] ? options[:order].to_s : column.name.to_s
           sort_class = (params[:order] != order || params[:sort_mode] == "reset") ? "sorting" : (params[:sort_mode] == "desc" ? "sorting_desc" : "sorting_asc")
@@ -28,8 +27,4 @@ module TableFor
       end
     end
   end
-end
-
-if defined?(ActionView::Base)
-  ActionView::Base.send :include, TableFor::ViewAdditions::ClassMethods
 end

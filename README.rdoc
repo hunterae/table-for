@@ -25,13 +25,13 @@ In users_controller.rb (index action)
                         :sortable => true, :sort_url => users_path,
                         :row_html => {:class => lambda { cycle('even', 'odd')},
                                       :id => lambda {|user| "user-#{user.id}"}} do |table| %>
-    <%= table.column :edit, :link_label => "Modify" %>
-    <%= table.column :show %>
-    <%= table.column :email, :label => "Email Address" %>
-    <%= table.column :label => "Full Name", :sortable => false, :header_html => {:style => "color:orange"} do |user| %>
+    <% table.column :edit, :link_label => "Modify" %>
+    <% table.column :show %>
+    <% table.column :email, :label => "Email Address" %>
+    <% table.column :label => "Full Name", :sortable => false, :header_html => {:style => "color:orange"} do |user| %>
       <%= "#{user.first_name} #{user.last_name}" %>
     <% end %>
-    <%= table.column :delete, :confirm => "Are you sure?" %>
+    <% table.column :delete, :confirm => "Are you sure?" %>
   <% end %>
 
 == Specifying the Columns to Use
@@ -153,7 +153,7 @@ to determine what data to output in each column.
   <!-- Adding a table footer -->
   <%= table_for @users do |table| %>
     <% table.column :email %>
-    <% table.after :tbody do %>
+    <% table.define :footer do %>
       <tfoot><tr><td colspan="<%= table.columns.length %>">My Footer</td></tr></tfoot>
     <% end %>
   <% end %>
@@ -187,9 +187,9 @@ to determine what data to output in each column.
   <%= table_for @users do |table| %>
     <% table.define :table do |options| %>
       <%= content_tag :table, options[:table_html] do %>
-        <!-- Instead of table.render :thead, do this -->
+        <!-- Instead of table.render :header, do this -->
         <%= table.render :header_row %>
-        <!-- Instead of table.render :tbody, do this -->
+        <!-- Instead of table.render :body, do this -->
         <%= table.render :rows %>
       <% end %>
     <% end %>
