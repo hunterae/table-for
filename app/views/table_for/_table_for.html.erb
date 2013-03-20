@@ -32,11 +32,7 @@
 
 <%# Define a header block for each column, named using that column's name with the word "_header" appended to it %>
 <% table.define lambda {|column| "#{column.name}_header" }, :collection => table.columns do |column, options| %>
-  <% if options[:sortable] %>
-    <%= table_for_sort_link(column, options) %>
-  <% else %>
-    <%= options[:label] ? options[:label] : column.name.to_s.titleize %>
-  <% end %>
+  <%= table_for_column_header(column, table.global_options[:records].model, options) %>
 <% end %>
 
 <% table.define :body do |options| %>

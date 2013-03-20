@@ -17,13 +17,22 @@ module TableFor
 
       def table_for_sort_link(column, options={})
         order = options[:order] ? options[:order].to_s : column.name.to_s
-        label = (options[:label] ? options[:label] : column.name.to_s.titleize)
+        label = options[:label] ? options[:label] : column.name.to_s.titleize
         sort_mode = (params[:order] != order || params[:sort_mode] == "reset") ? "asc" : (params[:sort_mode] == "desc" ? "reset" : "desc")
         parameters = params.merge(:order => order, :sort_mode => sort_mode)
         parameters.delete(:action)
         parameters.delete(:controller)
         url = options[:sort_url] ? options[:sort_url] : ""
         link_to label, "#{url}?#{parameters.to_query}"
+      end
+
+      def table_for_column_header(column, model, options={})
+        options[:label] ||= I18n.t("activerecord.attributes.#{model.to_s.underscore}.#{column.name}")
+        if options[:sortable]
+          table_for_sort_link(column, options)
+        else
+          options[:label]
+        end
       end
     end
   end
