@@ -291,7 +291,7 @@ describe "table_for" do
       end
       xml = XmlSimple.xml_in(%%
         <table>
-          <thead><tr><th class="email sorting" style="color:red"><a href="?order=email&sort_mode=asc">Email</a></th></tr></thead>
+          <thead><tr><th class="email sorting" style="color:red"><a href="?order=email&amp;sort_mode=asc">Email</a></th></tr></thead>
           <tbody><tr><td>andrew.hunter@livingsocial.com</td></tr></tbody>
         </table>%)
       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
@@ -304,7 +304,7 @@ describe "table_for" do
       end
       xml = XmlSimple.xml_in(%%
         <table>
-          <thead><tr><th class="sorting_asc"><a href="?order=email&sort_mode=desc">Email</a></th></tr></thead>
+          <thead><tr><th class="sorting_asc"><a href="?order=email&amp;sort_mode=desc">Email</a></th></tr></thead>
           <tbody><tr><td>andrew.hunter@livingsocial.com</td></tr></tbody>
         </table>%)
       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
@@ -317,7 +317,7 @@ describe "table_for" do
       end
       xml = XmlSimple.xml_in(%%
         <table>
-          <thead><tr><th class="sorting_asc"><a href="?order=email_address&sort_mode=desc">Email</a></th></tr></thead>
+          <thead><tr><th class="sorting_asc"><a href="?order=email_address&amp;sort_mode=desc">Email</a></th></tr></thead>
           <tbody><tr><td>andrew.hunter@livingsocial.com</td></tr></tbody>
         </table>%)
       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
@@ -330,7 +330,7 @@ describe "table_for" do
       end
       xml = XmlSimple.xml_in(%%
         <table>
-          <thead><tr><th class="sorting"><a href="?order=email_address&sort_mode=asc">Email</a></th></tr></thead>
+          <thead><tr><th class="sorting"><a href="?order=email_address&amp;sort_mode=asc">Email</a></th></tr></thead>
           <tbody><tr><td>andrew.hunter@livingsocial.com</td></tr></tbody>
         </table>%)
       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
@@ -343,7 +343,7 @@ describe "table_for" do
       end
       xml = XmlSimple.xml_in(%%
         <table>
-          <thead><tr><th class="sorting_desc"><a href="?order=email&sort_mode=reset">Email</a></th></tr></thead>
+          <thead><tr><th class="sorting_desc"><a href="?order=email&amp;sort_mode=reset">Email</a></th></tr></thead>
           <tbody><tr><td>andrew.hunter@livingsocial.com</td></tr></tbody>
         </table>%)
       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
@@ -356,7 +356,7 @@ describe "table_for" do
       end
       xml = XmlSimple.xml_in(%%
         <table>
-          <thead><tr><th class="sorting"><a href="?order=email&sort_mode=asc">Email</a></th></tr></thead>
+          <thead><tr><th class="sorting"><a href="?order=email&amp;sort_mode=asc">Email</a></th></tr></thead>
           <tbody><tr><td>andrew.hunter@livingsocial.com</td></tr></tbody>
         </table>%)
       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
@@ -369,7 +369,7 @@ describe "table_for" do
       end
       xml = XmlSimple.xml_in(%%
         <table>
-          <thead><tr><th class="sorting"><a href="/users?order=email&sort_mode=asc">Email</a></th></tr></thead>
+          <thead><tr><th class="sorting"><a href="/users?order=email&amp;sort_mode=asc">Email</a></th></tr></thead>
           <tbody><tr><td>andrew.hunter@livingsocial.com</td></tr></tbody>
         </table>%)
       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
@@ -386,9 +386,9 @@ describe "table_for" do
         <table>
           <thead>
             <tr>
-              <th class="sorting"><a href="?order=email&sort_mode=asc">Email</a></th>
+              <th class="sorting"><a href="?order=email&amp;sort_mode=asc">Email</a></th>
               <th>First Name</th>
-              <th class="sorting"><a href="?order=last_name&sort_mode=asc">Last Name</a></th>
+              <th class="sorting"><a href="?order=last_name&amp;sort_mode=asc">Last Name</a></th>
             </tr>
           </thead>
           <tbody><tr><td>andrew.hunter@livingsocial.com</td><td>Andrew</td><td>Hunter</td></tr></tbody>
@@ -407,9 +407,9 @@ describe "table_for" do
         <table>
           <thead>
             <tr>
-              <th class="email_header sorting"><a href="?order=email&sort_mode=asc">Email</a></th>
+              <th class="email_header sorting"><a href="?order=email&amp;sort_mode=asc">Email</a></th>
               <th class="my_header">First Name</th>
-              <th class="my_other_header sorting"><a href="?order=last_name&sort_mode=asc">Last Name</a></th>
+              <th class="my_other_header sorting"><a href="?order=last_name&amp;sort_mode=asc">Last Name</a></th>
             </tr>
           </thead>
           <tbody><tr><td>andrew.hunter@livingsocial.com</td><td>Andrew</td><td>Hunter</td></tr></tbody>
