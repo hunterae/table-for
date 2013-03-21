@@ -3,3 +3,4 @@
 /pkg/*
 .bundle
 spec/database.yml
+Gemfile.lock
