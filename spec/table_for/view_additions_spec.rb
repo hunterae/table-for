@@ -127,4 +127,23 @@ describe TableFor::ViewAdditions do
       @view.table_for_sort_link(@column).should eql "my link"
     end
   end
+
+  describe "table_for_column_header method" do
+    it "should translate column name" do
+      I18n.expects(:t).with("activerecord.attributes.user.my_column").returns("my translated link")
+      @view.table_for_column_header(@column, :user).should eql "my translated link"
+    end
+
+    it "should not translate column name if label passed" do
+      I18n.expects(:t).never
+      @view.expects(:table_for_sort_link).never
+      @view.table_for_column_header(@column, :user, { label: 'custom label' }).should eql "custom label"
+    end
+
+    it "should pass label to table_for_sort_link if sortable" do
+      options = { label: 'custom', sortable: true }
+      @view.expects(:table_for_sort_link).with(@column, options).returns('link')
+      @view.table_for_column_header(@column, :user, options).should eql 'link'
+    end
+  end
 end

@@ -195,3 +195,20 @@ to determine what data to output in each column.
     <% end %>
     <% table.column :email %>
   <% end %>
+
+== Using ActiveRecord I18n conventions
++table-for+ can do some dirty job for you, if you are using i18n by common rails conventions. For example, you have following in your en.yml:
+
+  en:
+    activerecord:
+      attributes:
+        user:
+          id: '#'
+          name: "Username"
+          bio: "Short biography"
+
+Then, +table-for+ will automatically catch up correct translations for column headers. If you are not familiar with i18n (but you really should), you can always pass custom label to the column header:
+
+  <%= table_for @users do |table| %>
+    <% table.column :parent_name, label: "Mr. Smith" %>
+  <% end %>    
