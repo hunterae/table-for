@@ -1,3 +1,8 @@
+2.1.0 (August 15, 2013)
+* Switched main gem dependency from building-blocks to blocks
+* Added the ability to configure a default table class in an initializer (for example: TableFor.setup do |config| config.default_table_class = "table striped" end)
+* Aliased current_record with current_row, so as you're iterating over the records, you can now call table.current_row
+
 2.0.0 (October 18, 2012)
 * Upgraded to BuildingBlocks 2.0.0
 * Renamed thead block to header, tbody to body, add added an empty footer block to the default table implementation

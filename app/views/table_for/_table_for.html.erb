@@ -1,5 +1,5 @@
 <% table.define :table do |options| %>
-  <%= content_tag :table, options[:table_html] do %>
+  <%= content_tag :table, table_for_table_html(options) do %>
     <%= table.render :header %>
     <%= table.render :body %>
     <%# Purposely no default implementation for the tfoot block given, since most tables do not have footers. Block provided to for easy hook to add a footer %>
@@ -77,7 +77,7 @@
 
 <%# Define a block for each column, named using that column's name %>
 <% table.define lambda {|column| column.name }, :collection => table.columns do |record, column, options| %>
-  <%= record.send(column.name) %>
+  <%= table_for_cell_data(record, column, options) %>
 <% end %>
 
 <%= table.render :table %>

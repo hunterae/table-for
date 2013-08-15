@@ -25,6 +25,27 @@ module TableFor
         url = options[:sort_url] ? options[:sort_url] : ""
         link_to label, "#{url}?#{parameters.to_query}"
       end
+
+      def table_for_table_html(options)
+        if options[:table_html]
+          options[:table_html].merge!(:class => TableFor.default_table_class) if TableFor.default_table_class && !options[:table_html][:class]
+          options[:table_html]
+        elsif TableFor.default_table_class
+          {:class => TableFor.default_table_class}
+        end
+      end
+
+      def table_for_cell_data(record, column, options)
+        if (options[:transformation])
+          if options[:transformation].is_a?(Proc)
+            options[:transformation].call(*[record, column, options][0, options[:transformation].arity])
+          else
+            record.send(column.name).try(*options[:transformation])
+          end
+        else
+          record.send(column.name)
+        end
+      end
     end
   end
 end
