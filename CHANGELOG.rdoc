@@ -1,3 +1,6 @@
+2.2.0 (August 16, 2013)
+* Upgraded to blocks 2.2.0 and modified calls to evaluated_proc and evaluated_procs to call_if_proc and call_each_hash_value_if_proc
+
 2.1.0 (August 15, 2013)
 * Switched main gem dependency from building-blocks to blocks
 * Added the ability to configure a default table class in an initializer (for example: TableFor.setup do |config| config.default_table_class = "table striped" end)

@@ -6,6 +6,7 @@ describe TableFor::ViewAdditions do
     @view = @view_class.new
     @view_class.send(:include, ActionView::Helpers::TextHelper)
     @view_class.send(:include, TableFor::ViewAdditions::ClassMethods)
+    @view_class.send(:include, Blocks::ViewAdditions::ClassMethods)
     @records = [OpenStruct.new(:id => 1)]
     @column = stub(:name => :my_column)
   end
@@ -43,43 +44,43 @@ describe TableFor::ViewAdditions do
   end
 
   describe "table_for_header_html method" do
-    it "should return nil if header_html is not passed in" do
-      header_html = @view.table_for_header_html(mock(:evaluated_procs => {}), @column)
+    it "should return an empty hash if header_html is not passed in" do
+      header_html = @view.table_for_header_html(@column)
       header_html.should eql({})
     end
 
     it "should evaluate any procs for header_html" do
-      header_html = @view.table_for_header_html(mock(:evaluated_procs => {:class => "#{@column.name}_header"}), @column, :header_html => {:class => lambda {|column| "#{column.name}_header"}})
+      header_html = @view.table_for_header_html(@column, :header_html => {:class => lambda {|column| "#{column.name}_header"}})
       header_html[:class].should eql "#{@column.name}_header"
     end
 
     it "should join the 'sorting' class with any other header_html class provided" do
       @view.expects(:params).returns({})
-      header_html = @view.table_for_header_html(mock(:evaluated_procs => {:class => "c1 c2"}), @column, :header_html => {:class => "c1 c2"}, :sortable => true)
+      header_html = @view.table_for_header_html(@column, :header_html => {:class => "c1 c2"}, :sortable => true)
       header_html[:class].should eql "c1 c2 sorting"
     end
 
     it "should add a 'sorting' class to the header_html class if a column is sortable" do
       @view.expects(:params).returns({})
-      header_html = @view.table_for_header_html(mock(:evaluated_procs => {}), @column, :sortable => true)
+      header_html = @view.table_for_header_html(@column, :sortable => true)
       header_html[:class].should eql "sorting"
     end
 
     it "should add a 'sorting_asc' class to the header_html class if a column is sortable and it is already sorted in asc order" do
       @view.expects(:params).at_least_once.returns(:order => @column.name.to_s, :sort_mode => "asc")
-      header_html = @view.table_for_header_html(mock(:evaluated_procs => {}), @column, :sortable => true)
+      header_html = @view.table_for_header_html(@column, :sortable => true)
       header_html[:class].should eql "sorting_asc"
     end
 
     it "should add a 'sorting_desc' class to the header_html class if a column is sortable and it is already sorted in desc order" do
       @view.expects(:params).at_least_once.returns(:order => @column.name.to_s, :sort_mode => "desc")
-      header_html = @view.table_for_header_html(mock(:evaluated_procs => {}), @column, :sortable => true)
+      header_html = @view.table_for_header_html(@column, :sortable => true)
       header_html[:class].should eql "sorting_desc"
     end
 
     it "should add a 'sorting' class to the header_html class if a column is sortable and it is reset mode" do
       @view.expects(:params).at_least_once.returns(:order => @column.name.to_s, :sort_mode => "reset")
-      header_html = @view.table_for_header_html(mock(:evaluated_procs => {}), @column, :sortable => true)
+      header_html = @view.table_for_header_html(@column, :sortable => true)
       header_html[:class].should eql "sorting"
     end
   end

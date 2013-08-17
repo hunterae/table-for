@@ -5,8 +5,8 @@ module TableFor
         TableFor::Base.new(self, options.merge(:variable => "table", :records => records, :use_partials => false)).render_template("table_for/table_for", &block)
       end
 
-      def table_for_header_html(table, column, options={})
-        header_html = table.evaluated_procs(options[:header_html], column)
+      def table_for_header_html(column, options={})
+        header_html = call_each_hash_value_if_proc(options[:header_html], column)
         if options[:sortable]
           order = options[:order] ? options[:order].to_s : column.name.to_s
           sort_class = (params[:order] != order || params[:sort_mode] == "reset") ? "sorting" : (params[:sort_mode] == "desc" ? "sorting_desc" : "sorting_asc")
@@ -35,10 +35,20 @@ module TableFor
         end
       end
 
+      def table_for_header_cell_data(column, options={})
+        unless options[:label] == false
+          if options[:sortable]
+            table_for_sort_link(column, options)
+          else
+            options[:label] ? options[:label] : column.name.to_s.titleize
+          end
+        end
+      end
+
       def table_for_cell_data(record, column, options)
         if (options[:transformation])
           if options[:transformation].is_a?(Proc)
-            options[:transformation].call(*[record, column, options][0, options[:transformation].arity])
+            call_if_proc(options[:transformation], record, column, options)
           else
             record.send(column.name).try(*options[:transformation])
           end
