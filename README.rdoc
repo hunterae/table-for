@@ -54,7 +54,7 @@ Produces (with Twitter Bootstrap):
 
 {<img src="https://raw.github.com/hunterae/table-for/master/example_table.png">}[http://example.com]
 
-For detailed instructions on how to run this example, checkout the {Example Details}[https://github.com/hunterae/table-for/master/example.rdoc].
+For detailed instructions on how to run this example, checkout the {Example Details}[https://github.com/hunterae/table-for/blob/master/example.rdoc].
 
 == table_for options
 sortable:: (defaults to false) sets whether all columns are sortable by default
