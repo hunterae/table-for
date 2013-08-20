@@ -1,7 +1,7 @@
 source "http://rubygems.org"
 
 gem 'rails', ">= 3.0.0"
-gem 'blocks', "~> 2.2.0"
+gem 'blocks', "~> 2.2.1"
 
 group :development do
   gem "rspec-rails", ">= 2.0.0.beta.20"
@@ -12,4 +12,5 @@ group :development do
   gem "with_model", '0.2.6'
   gem "bundler", "~> 1.3.5"
   gem "jeweler", "~> 1.8.4"
+  gem "debugger"
 end

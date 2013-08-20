@@ -1,0 +1,138 @@
+To run the example that generates this table:
+{<img src="https://raw.github.com/hunterae/table-for/master/example_table.png">}[http://example.com]
+
+In Gemfile:
+  gem "table-for", :git => "git@github.com:hunterae/table-for.git"
+
+  # To be able to generate an admin namespaced controller with a non-admin namespaced model
+  gem 'nifty-generators'
+
+  # To make things look a little nicer
+  gem 'therubyracer'
+  gem 'less-rails' #Sprockets (what Rails 3.1 uses for its asset pipeline) supports LESS
+  gem 'twitter-bootstrap-rails'
+
+  # To paginate the list
+  gem 'will_paginate', '~> 3.0'
+
+In seeds.rb:
+  User.create! :email => "hunterae@gmail.com", :first_name => "Andrew", :last_name => "Hunter"
+  User.create! :email => "todd@calltrackingmetrics.com", :first_name => "Todd", :last_name => "Fisher"
+  User.create! :email => "jon.phillips@livingsocial.com", :first_name => "Jon", :last_name => "Phillips"
+
+From console:
+  bundle install
+  rails g nifty:scaffold Admin::User email:string first_name:string last_name:string
+  rails generate bootstrap:install less
+  rake db:create && rake db:migrate && rake db:seed && rake db:seed && rake db:seed && rake db:seed
+  rails s
+
+In routes.rb:
+  namespace :admin do
+    resources :users do
+      collection do
+        match :sort, :to => :index, :via => [:get, :post]
+      end
+    end
+  end
+
+In users_controller.rb (index action)
+  @users = User.unscoped
+  if params[:order] && ["asc", "desc"].include?(params[:sort_mode])
+    order = params[:order].split(",").map {|o| "#{o} #{params[:sort_mode]}" }.join(", ")
+    @users = @users.order(order)
+  end
+  @users = @users.paginate(:per_page => 10, :page => params[:page])
+
+In views/admin/users/index.html.erb
+  <%= table_for @users,
+        # Specifies the html classes to be applied to the table element
+        :table_html => { :class => "table table-hover table-bordered" },
+
+        # Specifies that all columns are sortable by default
+        :sortable => true,
+
+        # Specifies the url that header sort links use
+        :sort_url => sort_admin_users_path,
+
+        # Specifies the namespace for generating links using Rails routing
+        :link_namespace => :admin,
+
+        # Specifies the classes and ids to be applied to each data row
+        :data_row_html => {
+          # The class of each row will alternate between four Twitter bootstrap classes: "success", "error", "warning", "info"
+          :class => lambda { cycle('success', 'error', 'warning', 'info')},
+
+          # Specifies the id using a Proc for each data row as "user-ID_OF_USER_RECORD"
+          :id => lambda { |user| "user-#{user.id}" }
+        } do |table| %>
+
+    <%# Method 1 for creating a link: Create edit link dynamically by specifying the link_scope globally above as :admin and the link_action as :edit %>
+    <% table.column :data => "Modify", :link_action => :edit %>
+
+    <%# Method 2 for creating a link: Create an show link by providing a link_url Proc %>
+    <% table.column :data => "Show", :link_url => lambda { |user| admin_user_path(user) } %>
+
+    <%# Method 3 for creating a link: Rely on RESTful routes to generate the link %>
+    <% table.column :data => "Show 2.0", :link => true %>
+
+    <%# Outputs the email column of the user; override the default generated header for the column with "Email Address" %>
+    <% table.column :email, :header => "Email Address" %>
+
+    <%# Outputs the first name column of the user with the :downcase method applied to it %>
+    <% table.column :first_name, :formatter => :downcase %>
+
+    <%# Outputs the last name column of the user using formatter Proc to dynamically specify what is output in the data cell %>
+    <% table.column :last_name, :formatter => Proc.new { |last_name| last_name.upcase } %>
+
+    <%# Outputs the created at column of the user applying the strftime method with the argument "%m/%d/%y %I:%M %p" to it %>
+    <% table.column :created_at, :formatter => [:strftime, "%m/%d/%y %I:%M %p"] %>
+
+    <%# 
+      Outputs the updated_at column of the user
+      Overrides the default generated header for the column with the dynamic result of calling it's Proc
+      Overrides the default sort-ability by specifying this column as non-sortable
+      Overrides the default header html with orange background color
+      Dynamically specifies the data for the column with a Proc
+        (Note also that the arguments to the Proc are optional and the data record can be accessed via "table.current_row" [or "table.current_record])")
+    %>
+    <% table.column :updated_at,
+                    :header => Proc.new {
+                      content_tag(:span, :class => "badge badge-success") do
+                        "Last Updated"
+                      end
+                    },
+                    :sortable => false,
+                    :header_column_html => { :style => "background-color:orange" },
+                    :data => Proc.new { time_ago_in_words table.current_row.updated_at } %>
+
+    <%# 
+      The data for the column can also be provided via a block
+      Overrides the default generated header for the column with "Full Name" (will itself be overridden below)
+      Overrides the default sort field with "last_name" then "first_name"
+    %>
+    <% table.column :full_name, :header => "Full Name", :order => "last_name, first_name" do |user| %>
+      <%= "#{user.first_name} #{user.last_name}" %>
+    <% end %>
+
+    <%# Overrides the content for the header of the full_name column %>
+    <% table.header :full_name do |column, options| %>
+      <%= table.header_sort_link(column, options) do %>
+        <span class="label label-important">FULL NAME</span>
+      <% end %>
+    <% end %>
+
+    <%# 
+      Method 3 (again) for creating a link: Rely on RESTful routes to generate the link, with a "delete" method 
+      Applies a confirmation to the link
+      Specifies the data to display in the column as "Delete"
+    %>
+    <% table.column :data => "Delete", :link_method => :delete, :link_confirm => "Are you sure?" %>
+
+    <%# Adds a footer that spans all the columns of the table and shows pagination links for the table %>
+    <% table.footer do %>
+      <div class="pull-right">
+        <%= will_paginate @users %>
+      </div>
+    <% end %>
+  <% end %>

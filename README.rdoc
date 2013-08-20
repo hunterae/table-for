@@ -1,197 +1,101 @@
 = table-for
 
-Table-for is a table builder for a collection of domain objects. It very easily allows the user to specify the columns to render and to override how the table, the header columns, the rows, and the columns are rendered.
+TableFor is a table builder for a collection of domain objects. It very easily allows the user to specify the columns to render and to override how the table, the header columns, the rows, and the columns are rendered.
 
 == Installation
 
-In <b>Rails 3</b>, add this to your Gemfile.
+In <b>Rails 3 or Rails 4</b>, add this to your Gemfile.
 
-  gem "table-for"
+  gem "table-for", :git => "git@github.com:hunterae/table-for.git"
 
-In this example, I'm going to assume the following setup:
-From the console, I have generated a user model with email, first_name, and last_name fields, and generated a scaffold on that model
-  rails g scaffold user email:string first_name:string last_name:string --no-stylesheets
+== Example
+The following example is purposely complex (in many cases, there are easier ways to do what is shown) in order to show a wide range of features that TableFor is capable of:
 
-In seeds.rb:
-  User.create! :email => "andrew.hunter@livingsocial.com", :first_name => "Andrew", :last_name => "Hunter"
-  User.create! :email => "todd.fisher@livingsocial.com", :first_name => "Todd", :last_name => "Fisher"
-  User.create! :email => "jon.phillips@livingsocial.com", :first_name => "Jon", :last_name => "Phillips"
-
-In users_controller.rb (index action)
-  @users = User.all
-
-== Sample Usage
-  <%= table_for @users, :table_html => {:style => "border: 1px solid black"},
-                        :sortable => true, :sort_url => users_path,
-                        :row_html => {:class => lambda { cycle('even', 'odd')},
-                                      :id => lambda {|user| "user-#{user.id}"}} do |table| %>
-    <% table.column :edit, :link_label => "Modify" %>
-    <% table.column :show %>
-    <% table.column :email, :label => "Email Address" %>
-    <% table.column :label => "Full Name", :sortable => false, :header_html => {:style => "color:orange"} do |user| %>
+  <%= table_for @users, :table_html => { :class => "table table-hover table-bordered" },
+                        :sortable => true,
+                        :sort_url => sort_admin_users_path,
+                        :link_namespace => :admin,
+                        :data_row_html => {
+                          :class => lambda { cycle('success', 'error', 'warning', 'info')},
+                          :id => lambda { |user| "user-#{user.id}" }} do |table| %>
+    <% table.column :data => "Modify", :link_action => :edit %>
+    <% table.column :data => "Show", :link_url => lambda { |user| admin_user_path(user) } %>
+    <% table.column :data => "Show 2.0", :link => true %>
+    <% table.column :email, :header => "Email Address" %>
+    <% table.column :first_name, :formatter => :downcase %>
+    <% table.column :last_name, :formatter => Proc.new { |last_name| last_name.upcase } %>
+    <% table.column :created_at, :formatter => [:strftime, "%m/%d/%y %I:%M %p"] %>
+    <% table.column :updated_at,
+                    :header => Proc.new {
+                      content_tag(:span, :class => "badge badge-success") do
+                        "Last Updated"
+                      end
+                    },
+                    :sortable => false,
+                    :header_column_html => { :style => "background-color:orange" },
+                    :data => Proc.new { time_ago_in_words table.current_row.updated_at } %>
+    <% table.column :full_name, :header => "Full Name", :order => "last_name, first_name" do |user| %>
       <%= "#{user.first_name} #{user.last_name}" %>
     <% end %>
-    <% table.column :delete, :confirm => "Are you sure?" %>
-  <% end %>
-
-== Specifying the Columns to Use
-  <%= table_for @users do |table| %>
-    <% table.column :email %>
-    <% table.column :first_name %>
-    <% table.column :last_name %>
-  <% end %>
-
-Here, each column will send its respective column name to the user object: user.send(:email), user.send(:first_name), user.send(:last_name),
-to determine what data to output in each column.
-
-== Specifying the Label to Use for a Column
-  <%= table_for @users do |table| %>
-    <% table.column :email, :label => "Email Address" %>
-  <% end %>
-
-== Overriding the Default Way of Rendering a Column
-  <%= table_for @users do |table| %>
-    <% table.column :name do |user| %>
-      <%= "#{user.first_name} #{user.last_name}" %>
-    <% end %>
-  <% end %>
-
-  <!-- Or, since the name of the column is no longer used to figure out what data to render: -->
-  <%= table_for @users do |table| %>
-    <% table.column :full_name do |user| %>
-      <%= "#{user.first_name} #{user.last_name}" %>
-    <% end %>
-  <% end %>
-
-  <!-- Or the block name could be removed altogether and replaced with a label: -->
-  <%= table_for @users do |table| %>
-    <% table.column :label => "Full Name" do |user| %>
-      <%= "#{user.first_name} #{user.last_name}" %>
-    <% end %>
-  <% end %>
-
-== Specifying Sortability
-  <!-- Globally: -->
-  <%= table_for @users, :sortable => true, :sort_url => users_path do |table| %>
-    <% table.column :id, :sortable => false %>
-    <% table.column :email %>
-    <% table.column :name, :order => "first_name,last_name" do |user| %>
-      <%= "#{user.first_name} #{user.last_name}" %>
-    <% end %>
-  <% end %>
-
-  <!-- Column by column basis: -->
-  <%= table_for @users, :sort_url => users_path do |table| %>
-    <% table.column :id %>
-    <% table.column :email, :sortable => true %>
-    <% table.column :name, :order => "first_name,last_name", :sortable => true do |user| %>
-      <%= "#{user.first_name} #{user.last_name}" %>
-    <% end %>
-  <% end %>
-
-== Specifying the Table HTML
-  <%= table_for @users, :table_html => {:class => "table-for-table", :style => "border:1px solid black"} %>
-
-== Specifying the Row HTML
-  <!-- Header row -->
-  <%= table_for @users, :header_row_html => {:style => "background-color:blue", :class => "table-header"} do |table| %>
-    <% table.column :email %>
-  <% end %>
-
-  <!-- Data rows -->
-  <%= table_for @users, :row_html => {:style => "background-color:blue",
-                                      :class => lambda {"table-row #{cycle('even', 'odd')}"},
-                                      :id => lambda {|user| "user-#{user.id}"}} do |table| %>
-    <% table.column :email %>
-  <% end %>
-
-== Specifying the Column HTML
-  <!-- Header columns -->
-  <%= table_for @users, :header_html => {:class => lambda {|column| "header-column #{column.name}"} } do |table| %>
-    <!-- Override this columns' header's html -->
-    <% table.column :email, :header_html => {:style => "color: red"} %>
-    <% table.column :first_name %>
-    <% table.column :last_name %>
-  <% end %>
-
-  <!-- Data columns -->
-  <%= table_for @users, :column_html => {:class => lambda {|column| "data-column #{column.name}"} } do |table| %>
-    <!-- Override this column's html -->
-    <% table.column :email, :column_html => {:style => "background-color: red"} %>
-    <% table.column :first_name %>
-    <% table.column :last_name %>
-  <% end %>
-
-== Using Show, Edit, and Delete Columns
-  <%= table_for @users do |table| %>
-    <!-- Standard show link -->
-    <% table.column :show %>
-
-    <!-- Specify the controller action for the show link (used for generating the link) -->
-    <% table.column :show, :action => :display %>
-
-    <!-- Standard edit link -->
-    <% table.column :edit %>
-
-    <!-- Specify the text for the edit link -->
-    <% table.column :edit, :link_label => "Modify" %>
-
-    <!-- Specify the url for the edit link -->
-    <% table.column :edit, :url => lambda {|user| edit_user_path(user) } %>
-
-    <!-- Specify the controller action for the edit link (used for generating the link) -->
-    <% table.column :edit, :action => :modify %>
-
-    <!-- Specify the scope for the edit link (i.e. for nested resources) -->
-    <% table.column :edit, :scope => :admin %>
-
-    <!-- Specify the confirmation message for the confirm link -->
-    <% table.column :delete, :confirm => "Are you sure???" %>
-  <% end %>
-
-== Using "Before" and "After" hooks
-  <!-- Adding a table footer -->
-  <%= table_for @users do |table| %>
-    <% table.column :email %>
-    <% table.define :footer do %>
-      <tfoot><tr><td colspan="<%= table.columns.length %>">My Footer</td></tr></tfoot>
-    <% end %>
-  <% end %>
-
-  <!-- Evaluating an expression before each row renders -->
-  <%= table_for @users do |table| %>
-    <% table.before :row do |user| %>
-      <!-- Perform some calculation -->
-      <% @evaluated_data = user.do_some_method %>
-    <% end %>
-    <% table.column :label => "First Column" do |user| %>
-      <!-- Use the stored value in some way -->
-      <%= @evaluated_data.method_1 %>
-    <% end %>
-    <% table.column :label => "Second Column" do |user| %>
-      <!-- Use the stored value in some other way -->
-      <%= @evaluated_data.method_2 %>
-    <% end %>
-  <% end %>
-
-  <!-- Adding a row before all the data rows -->
-  <%= table_for @users do |table| %>
-    <% table.before :rows do %>
-      <tr><td colspan="<%= table.columns.length %>">My First Row</td></tr>
-    <% end %>
-    <% table.column :email %>
-  <% end %>
-
-== Changing the Default Way table_for Renders
-  <!-- Don't render thead and tbody tags -->
-  <%= table_for @users do |table| %>
-    <% table.define :table do |options| %>
-      <%= content_tag :table, options[:table_html] do %>
-        <!-- Instead of table.render :header, do this -->
-        <%= table.render :header_row %>
-        <!-- Instead of table.render :body, do this -->
-        <%= table.render :rows %>
+    <% table.header :full_name do |column, options| %>
+      <%= table.header_sort_link(column, options) do %>
+        <span class="label label-important">FULL NAME</span>
       <% end %>
     <% end %>
-    <% table.column :email %>
+    <% table.column :data => "Delete", :link_method => :delete, :link_confirm => "Are you sure?" %>
+    <% table.footer do %>
+      <div class="pull-right">
+        <%= will_paginate @users %>
+      </div>
+    <% end %>
   <% end %>
+
+Produces (with Twitter Bootstrap):
+
+{<img src="https://raw.github.com/hunterae/table-for/master/example_table.png">}[http://example.com]
+
+For detailed instructions on how to run this example, checkout the {Example Details}[https://github.com/hunterae/table-for/master/example.rdoc].
+
+== table_for options
+sortable:: (defaults to false) sets whether all columns are sortable by default
+sort_url:: (defaults to "") sets the url for the header column links
+link_namespace:: TODO
+table_html:: TODO
+thead_html:: TODO
+table_row_html:: TODO
+header_html:: TODO
+header_row_html:: TODO
+tbody_html:: TODO
+data_row_html:: TODO
+data_column_html:: TODO
+tfoot_html:: TODO
+footer_row_html:: TODO
+footer_column_html:: TODO
+
+== table_for column options
+data:: TODO
+header:: TODO
+formatter:: TODO
+sortable:: TODO
+sort_url:: TODO
+order:: TODO
+link_url:: TODO
+link_action:: TODO
+link_method:: TODO
+link_confirm:: TODO
+link:: TODO
+data_column_html:: TODO
+header_column_html:: TODO
+link_html
+
+== table_for header options
+TODO
+
+== table_for footer options
+TODO
+
+== table_for configuration
+TODO
+
+== Using "Before" and "After" hooks
+TODO
