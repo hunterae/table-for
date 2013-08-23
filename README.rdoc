@@ -57,20 +57,69 @@ Produces (with Twitter Bootstrap):
 For detailed instructions on how to run this example, along with comments on every line of the above table, check out the {Example Details}[https://github.com/hunterae/table-for/blob/master/example.rdoc].
 
 == table_for options
-sortable:: (defaults to false) sets whether all columns are sortable by default
-sort_url:: (defaults to "") sets the url for the header column links
-link_namespace:: TODO
-table_html:: TODO
-thead_html:: TODO
-table_row_html:: TODO
-header_html:: TODO
-header_row_html:: TODO
-tbody_html:: TODO
-data_row_html:: TODO
-data_column_html:: TODO
-tfoot_html:: TODO
-footer_row_html:: TODO
-footer_column_html:: TODO
+The first argument to the table_for call will always be the array of domain objects. The second argument is a hash
+and is optional. It is any combination of the following options:
+
+sortable::
+  (defaults to false)
+  Sets whether all columns are sortable by default.
+  If this field is set to true, each column header will be generated as a link.
+sort_url::
+  (defaults to "")
+  Sets the url for the header column links. This will only affect columns that are sortable.
+link_namespace::
+  (defaults to nil)
+  Sets the default namespace for any links generated in the columns.
+  For example, a link_namespace of admin would try to build links within the admin namespace in the routes.
+  This can be specified as a string, an array, a domain object, or a symbol,
+  i.e. :link_namespace => [:admin, @post, :comments]
+table_html::
+  (defaults to nil)
+  Hash to specify the styles, classes, id, and other attributes applied to the table element,
+  i.e. :table_html => { :id => "my-table", :class => "table table-bordered", :cellpadding => 2 }.
+thead_html::
+  (defaults to nil)
+  Hash to specify the styles, classes, id, and other attributes applied to the thead element,
+  i.e. :thead_html => { :id => "thead-id" }
+  Note: If TableFor.render_thead_element is set to false, the thead surrounding element for the
+  header row will not be rendered.
+header_row_html::
+  (defaults to nil)
+  Hash to specify the styles, classes, id, and other attributes applied to the header row (tr) element,
+  i.e. :header_row_html => { :style => 'color: orange' }
+header_column_html::
+  (defaults to {})
+  Hash to specify the styles, classes, id, and other attributes applied to the header column (th) element.
+  The values in this hash can each be a string or a Proc that takes (optionally) the column object as a parameter
+  i.e. :header_column => { :style => "font-weight: bold" }, or :header_column => { :class => Proc.new {|column| "#{column.name}_header" } }
+tbody_html::
+  (defaults to nil)
+  Hash to specify the styles, classes, id, and other attributes applied to the tbody element,
+  i.e. :tbody_html => { :id => "body-id" }
+  Note: If TableFor.render_tbody_element is set to false, the tbody surrounding element for the
+  table data rows will not be rendered.
+data_row_html::
+  (defaults to nil)
+  Hash to specify the styles, classes, id, and other attributes applied to each data row element (tr).
+  The values in this hash can each be a string or a Proc that takes (optionally) the current record as a parameter
+  i.e. :data_row_html => { :class => lambda { cycle('success', 'error', 'warning', 'info')}, :id => lambda { |user| "user-#{user.id}" } }
+data_column_html::
+  (defaults to {})
+  Hash to specify the styles, classes, id, and other attributes applied to the header column (th) element.
+  The values in this hash can each be a string or a Proc that takes (optionally) the current_record and (also optionally) the column object as parameters
+  i.e. :data_column_html => { :style => "font-weight: bold", :id => Proc.new {|record, column| "record-#{record.id}-#{column.name}" } }
+tfoot_html::
+  (defaults to nil)
+  Hash to specify the styles, classes, id, and other attributes applied to the tfoot element,
+  i.e. :tfoot_html => { :id => "tfoot-id" }
+  Note: If TableFor.render_tfoot_element is set to false, the tfoot surrounding element for the
+  footer row will not be rendered.
+footer_row_html::
+  (defaults to nil)
+  Hash to specify the styles, classes, id, and other attributes applied to the footer row (tr) element,
+  i.e. :footer_row_html => { :style => 'color: orange' }
+footer_column_html::
+  TODO
 
 == table_for column options
 data:: TODO
@@ -83,10 +132,10 @@ link_url:: TODO
 link_action:: TODO
 link_method:: TODO
 link_confirm:: TODO
+link_html::
 link:: TODO
 data_column_html:: TODO
 header_column_html:: TODO
-link_html
 
 == table_for header options
 TODO
