@@ -19,7 +19,7 @@ module TableFor
       end
 
       def header_column_html(column, options={})
-        header_column_html = view.call_each_hash_value_if_proc(options[:header_column_html], column)
+        header_column_html = call_each_hash_value_with_params(options[:header_column_html], column)
         if options[:sortable]
           order = options[:order] ? options[:order].to_s : column.name.to_s
           sort_class = (view.params[:order] != order || view.params[:sort_mode] == "reset") ? "sorting" : (view.params[:sort_mode] == "desc" ? "sorting_desc" : "sorting_asc")
@@ -32,7 +32,7 @@ module TableFor
         unless options[:header] == false
           header_sort_link(column, options) do
             if options[:header]
-              view.call_if_proc options[:header], column
+              call_with_params options[:header], column
             elsif column.anonymous
               nil
             else
@@ -44,17 +44,17 @@ module TableFor
 
       def cell_content(record, column, options={})
         if options[:link_url] || options[:link_action] || options[:link_method] || options[:link_confirm] || options[:link]
-          url = options[:link_url] ? view.call_if_proc(options[:link_url], record) : [options[:link_action], options[:link_namespace], record].flatten
+          url = options[:link_url] ? call_with_params(options[:link_url], record) : [options[:link_action], options[:link_namespace], record].flatten
         end
 
         if options[:formatter]
           if options[:formatter].is_a?(Proc)
-            content = view.call_if_proc(options[:formatter], record.send(column.name), options)
+            content = call_with_params(options[:formatter], record.send(column.name), options)
           else
             content = record.send(column.name).try(*options[:formatter])
           end
         elsif options[:data] || [:edit, :show, :delete].include?(column.name)
-          content = view.call_if_proc(options[:data], record)
+          content = call_with_params(options[:data], record)
         else
           content = record.send(column.name)
         end

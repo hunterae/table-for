@@ -46,13 +46,13 @@
 
 <% table.define :data_row do |record, options| %>
   <% table.set_current_record(record) %>
-  <%= content_tag :tr, call_each_hash_value_if_proc(options[:data_row_html], record) do %>
+  <%= content_tag :tr, table.call_each_hash_value_with_params(options[:data_row_html], record) do %>
     <%= table.render :data_column, record, :collection => table.columns %>
   <% end %>
 <% end %>
 
 <% table.define :data_column do |column, record, options| %>
-  <%= content_tag :td, call_each_hash_value_if_proc(options[:data_column_html], record, column) do %>
+  <%= content_tag :td, table.call_each_hash_value_with_params(options[:data_column_html], record, column) do %>
     <%= table.render column.name, record, column, column.options %>
   <% end %>
 <% end %>
