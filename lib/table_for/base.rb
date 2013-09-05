@@ -1,7 +1,7 @@
 require 'blocks'
 
 module TableFor
-  class Base < Blocks::Base
+  class Base < WithTemplate::Base
     include TableFor::HelperMethods::InstanceMethods
 
     alias columns queued_blocks

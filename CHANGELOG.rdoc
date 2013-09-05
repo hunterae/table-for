@@ -1,3 +1,9 @@
+3.1.0
+* Since templating was moved from blocks into its own gem with_template, TableFor::Base now extends WithTemplate::Base instead of Blocks::Base.
+
+3.0.0
+* TODO
+
 2.2.0 (August 16, 2013)
 * Upgraded to blocks 2.2.0 and modified calls to evaluated_proc and evaluated_procs to call_if_proc and call_each_hash_value_if_proc
 
