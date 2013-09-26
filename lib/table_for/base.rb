@@ -1,4 +1,5 @@
 require 'with_template'
+require 'blocks'
 
 module TableFor
   class Base < WithTemplate::Base
