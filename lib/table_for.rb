@@ -1,6 +1,5 @@
 require "action_view"
 require "table_for/engine"
-require "blocks"
 
 module TableFor
   autoload :Base, "table_for/base"
