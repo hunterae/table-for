@@ -1,4 +1,5 @@
 require "action_view"
+require "with_template"
 require "table_for/engine"
 
 module TableFor
