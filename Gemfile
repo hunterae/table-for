@@ -1,7 +1,7 @@
 source "http://rubygems.org"
 
 gem 'rails', ">= 3.0.0"
-gem 'with_template', "~> 0.0.1"
+gem 'with_template', "~> 0.0.3"
 
 group :development do
   gem "rspec-rails", ">= 2.0.0.beta.20"

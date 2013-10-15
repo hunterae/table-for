@@ -29,7 +29,7 @@ GEM
       i18n (= 0.6.1)
       multi_json (~> 1.0)
     arel (3.0.2)
-    blocks (2.4.0)
+    blocks (2.5.0)
       call_with_params
       rails (>= 3.0.0)
     builder (3.0.4)
@@ -121,8 +121,8 @@ GEM
     with_model (0.2.6)
       activerecord (>= 2.3.5, < 4.0.0)
       rspec (< 3)
-    with_template (0.0.1)
-      blocks (~> 2.4.0)
+    with_template (0.0.3)
+      blocks (~> 2.5.0)
       rails (>= 3.0.0)
     xml-simple (1.1.1)
 
@@ -139,5 +139,5 @@ DEPENDENCIES
   sqlite3
   supermodel (= 0.1.4)
   with_model (= 0.2.6)
-  with_template (~> 0.0.1)
+  with_template (~> 0.0.3)
   xml-simple (= 1.1.1)
