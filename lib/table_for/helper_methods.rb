@@ -36,7 +36,7 @@ module TableFor
             elsif column.anonymous
               nil
             else
-              column.name.to_s.titleize
+              I18n.t("#{translation_lookup_prefix}.#{column.name.to_s.underscore}", :default => column.name.to_s.titleize)
             end
           end
         end
@@ -81,6 +81,19 @@ module TableFor
           view.link_to view.capture(self, &block), "#{url}?#{parameters.to_query}"
         else
           view.capture(self, &block)
+        end
+      end
+
+      private
+      def translation_lookup_prefix
+        if global_options[:records].respond_to?(:model)
+          "activerecord.attributes.#{global_options[:records].model.to_s.underscore}"
+        elsif global_options[:records].all? {|record| record.is_a?(ActiveRecord::Base) && record.class == global_options[:records].first.class }
+          "activerecord.attributes.#{global_options[:records].first.class.to_s.underscore}"
+        elsif global_options[:records].all? {|record| record.class == global_options[:records].first.class }
+          "tables.columns.#{global_options[:records].first.class.to_s.underscore}"
+        else
+          "tables.columns"
         end
       end
     end

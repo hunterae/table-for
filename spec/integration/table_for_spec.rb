@@ -9,6 +9,13 @@ describe "table_for" do
     end
   end
 
+  class Offer
+    attr_accessor :first_name
+    def initialize(first_name)
+      @first_name = first_name
+    end
+  end
+
   before :each do
     User.create! :email => "andrew.hunter@livingsocial.com", :first_name => "Andrew", :last_name => "Hunter"
     User.create! :email => "todd.fisher@livingsocial.com", :first_name => "Todd", :last_name => "Fisher"
@@ -73,6 +80,51 @@ describe "table_for" do
     it "should be able to specify html attributes" do
       buffer = @view.table_for @users[0,1], :thead_html => {:style => "background-color: orange"}
       xml = XmlSimple.xml_in(%%<table><thead style="background-color: orange"><tr></tr></thead><tbody><tr></tr></tbody></table>%)
+      XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
+    end
+
+    it "should translate column names" do
+      rails_4_active_record_array = @users[0, 1].clone
+      rails_4_active_record_array.expects(:model => User)
+      I18n.expects(:t).with("activerecord.attributes.user.first_name", :default => "First Name").returns("Vorname")
+      buffer = @view.table_for rails_4_active_record_array do |table|
+        table.column :first_name
+      end
+      xml = XmlSimple.xml_in(%%<table><thead><tr><th>Vorname</th></tr></thead><tbody><tr><td>Andrew</td></tr></tbody></table>%)
+      XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
+
+      I18n.expects(:t).with("activerecord.attributes.user.first_name", :default => "First Name").returns("Vorname2")
+      buffer = @view.table_for @users[0,1] do |table|
+        table.column :first_name
+      end
+      xml = XmlSimple.xml_in(%%<table><thead><tr><th>Vorname2</th></tr></thead><tbody><tr><td>Andrew</td></tr></tbody></table>%)
+      XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
+
+      non_activerecord_array = [Offer.new("Timmy")]
+
+      I18n.expects(:t).with("tables.columns.offer.first_name", :default => "First Name").returns("Vorname3")
+      buffer = @view.table_for non_activerecord_array do |table|
+        table.column :first_name
+      end
+      xml = XmlSimple.xml_in(%%<table><thead><tr><th>Vorname3</th></tr></thead><tbody><tr><td>Timmy</td></tr></tbody></table>%)
+      XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
+
+      # the rare case where the array has objects of different types
+      mixed_array = [@users.first, Offer.new("Timmy")]
+      I18n.expects(:t).with("tables.columns.first_name", :default => "First Name").returns("Vorname3")
+      buffer = @view.table_for mixed_array do |table|
+        table.column :first_name
+      end
+      xml = XmlSimple.xml_in(%%<table><thead><tr><th>Vorname3</th></tr></thead><tbody><tr><td>Andrew</td></tr><tr><td>Timmy</td></tr></tbody></table>%)
+      XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
+    end
+
+    it "should not translate column name if header passed" do
+      I18n.expects(:t).never
+      buffer = @view.table_for @users[0,1] do |table|
+        table.column :first_name, :header => "My First Name"
+      end
+      xml = XmlSimple.xml_in(%%<table><thead><tr><th>My First Name</th></tr></thead><tbody><tr><td>Andrew</td></tr></tbody></table>%)
       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
     end
   end
