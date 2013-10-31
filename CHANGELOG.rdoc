@@ -1,5 +1,5 @@
 3.1.5
-* Added automatic internationalization (thanks killthekitten)
+* Added automatic internationalization (thanks {killthekitten}[https://github.com/killthekitten])
 
 3.1.0
 * Since templating was moved from blocks into its own gem with_template, TableFor::Base now extends WithTemplate::Base instead of Blocks::Base.
