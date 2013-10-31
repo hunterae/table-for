@@ -6,7 +6,7 @@ TableFor is a table builder for a collection of domain objects. It very easily a
 
 In <b>Rails 3 or Rails 4</b>, add this to your Gemfile.
 
-  gem "table-for", :git => "git@github.com:hunterae/table-for.git"
+  gem "table-for"
 
 == Example
 The following example is purposely complex (in many cases, there are easier ways to do what is shown) in order to show a wide range of features that TableFor is capable of:
