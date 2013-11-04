@@ -1,5 +1,5 @@
 <% table.define :table do |options| %>
-  <%= content_tag :table, table.table_html(options) do %>
+  <%= content_tag :table, options[:table_html] do %>
     <%= table.render :header %>
     <%= table.render :body %>
     <%# Purposely no default implementation for the tfoot block given, since most tables do not have footers (provided to for easy hook to add a footer). %>
@@ -8,11 +8,7 @@
 <% end %>
 
 <% table.define :header do |options| %>
-  <% if TableFor.render_thead_element %>
-    <%= content_tag :thead, options[:thead_html] do %>
-      <%= table.render :header_row %>
-    <% end %>
-  <% else %>
+  <%= table.content_tag_with_block options[:thead_tag], options[:thead_html] do %>
     <%= table.render :header_row %>
   <% end %>
 <% end %>
@@ -35,11 +31,7 @@
 <% end %>
 
 <% table.define :body do |options| %>
-  <% if TableFor.render_tbody_element %>
-    <%= content_tag :tbody, options[:tbody_html] do %>
-      <%= table.render :data_row, :collection => records %>
-    <% end %>
-  <% else %>
+  <%= table.content_tag_with_block options[:tbody_tag], options[:tbody_html] do %>
     <%= table.render :data_row, :collection => records %>
   <% end %>
 <% end %>
@@ -63,11 +55,7 @@
 <% end %>
 
 <% table.define :footer do |options| %>
-  <% if TableFor.render_tfoot_element %>
-    <%= content_tag :tfoot, options[:tfoot_html] do %>
-      <%= table.render :footer_row %>
-    <% end %>
-  <% else %>
+  <%= table.content_tag_with_block options[:tfoot_tag], options[:tfoot_html] do %>
     <%= table.render :footer_row %>
   <% end %>
 <% end if table.defined?(:footer_content) %>

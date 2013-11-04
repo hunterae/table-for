@@ -11,7 +11,7 @@ describe TableFor::ViewAdditions do
     @column = stub(:name => :my_column)
   end
 
-  describe "table_for method" do
+  describe "#table_for" do
     it "should call render_template on the TableFor::Base instance" do
       TableFor::Base.expects(:new).returns(mock(:render_template => ""))
       @view.table_for(@records)

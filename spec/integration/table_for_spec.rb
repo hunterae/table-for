@@ -85,7 +85,7 @@ describe "table_for" do
 
     it "should translate column names" do
       rails_4_active_record_array = @users[0, 1].clone
-      rails_4_active_record_array.expects(:model => User)
+      Array.any_instance.expects(:model => User)
       I18n.expects(:t).with("activerecord.attributes.user.first_name", :default => "First Name").returns("Vorname")
       buffer = @view.table_for rails_4_active_record_array do |table|
         table.column :first_name
@@ -93,6 +93,7 @@ describe "table_for" do
       xml = XmlSimple.xml_in(%%<table><thead><tr><th>Vorname</th></tr></thead><tbody><tr><td>Andrew</td></tr></tbody></table>%)
       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
 
+      Array.any_instance.stubs(:respond_to? => false)
       I18n.expects(:t).with("activerecord.attributes.user.first_name", :default => "First Name").returns("Vorname2")
       buffer = @view.table_for @users[0,1] do |table|
         table.column :first_name
