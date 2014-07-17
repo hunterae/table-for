@@ -64,11 +64,13 @@ sortable::
   (defaults to false)
   Sets whether all columns are sortable by default.
   If this field is set to true, each column header will be generated as a link.
-    Example: <%= table_for @users, :sortable => true %><% table.column :first_name %><% end %>
+    <%= table_for @users, :sortable => true %><% table.column :first_name %><% end %>
 sort_url::
   (defaults to the current path)
   Sets the url for the header column links. This will only affect columns that are sortable.
-    Example: <%= table_for @users, :sortable => true, :sort_url => sort_admin_users_path %><% table.column :first_name %><% end %>
+    <%= table_for @users, :sortable => true, :sort_url => sort_admin_users_path %>
+      <% table.column :first_name %>
+    <% end %>
 link_namespace::
   (defaults to nil)
   Sets the default namespace for any links generated in the columns.
