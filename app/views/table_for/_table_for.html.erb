@@ -2,7 +2,6 @@
   <%= content_tag :table, options[:table_html] do %>
     <%= table.render :header %>
     <%= table.render :body %>
-    <%# Purposely no default implementation for the tfoot block given, since most tables do not have footers (provided to for easy hook to add a footer). %>
     <%= table.render :footer %>
   <% end %>
 <% end %>
