@@ -166,24 +166,44 @@ footer_column_html::
     <% end %>
 
 == table_for column options
-Each individual table column can specify it's own set of options, which can override any options applied globally in the table options.
+Each individual table column can specify it's own set of options, which can override any options 
+applied globally in the table options.
 
-The first argument to the column is optional and represents the name of the column. If specified, it must be unique to the table, and
-TableFor will attempt to use this field to lookup the value to display in the record, as well as the name to apply to the header column.
+The first argument to the column is optional and represents the name of the column. 
+If specified, it must be unique to the table, and TableFor will attempt to use this 
+field to lookup the value to display in the record, as well as the name to apply to the header column.
 
-For example, <% table.column :first_name %> will output the first_name field for each record passed to the table. Additionally, it will
-titleize "first_name" to "First Name" and use that label for the header of the column.
+For example, <% table.column :first_name %> will output the first_name field for each record passed to the table. 
 
-The second argument (or first is the name of the column is ommitted) to a table column is a hash and is also optional. It is any combination of the following options:
+If a :header option is not specified for the individual column, it will use this first argument to 
+check for a translation key to give the header of the column a name (see below under Internationalization). 
+Failing to find a translation key, it will titleize "first_name" to "First Name" and use
+that label for the header of the column.
+
+The second argument (or first argument if the name of the column is ommitted) to a table column is a hash and is also optional. It is any combination of the following options:
 
 data::
   (defaults to nil)
-  Either an object instance (on which #to_s will be invoked) or a Proc (which can optionally take the current row as an option), representing the text to be shown in the data cell of the column.
+  Either an object instance (on which #to_s will be invoked) or a Proc
+  (which can optionally take the current row as an option), representing the text to be shown
+  in the data cell of the column.
     <%= table_for @users do |table| %>
       <% table.column :data => "Edit" %>
       <% table.column :name, :data => Proc.new {|user| user.name.underscore.upcase } %>
     <% end %>
-formatter:: TODO
+formatter::
+  (defaults to nil)
+  Either a method name, and array with the method to invoke and its arguments, 
+  or a Proc (which will be passed the value requiring formatting,
+  based on the current column's name. The :formatter argument will only work if the column name has been specified.
+  In such a case, the current iteration row will be sent the name of the column, and the resulting value will be
+  what's being formatted. If there is a simple method that needs to be applied to the result, that method name can
+  be specified as the formatter, or a series of method names (shown in examples below):
+    <%= table_for @users |table| %>
+      <% table.column :id, :formatter => :ordinalize %>
+      <% table.column :full_name, :formatter => [:gsub, /d/, "*"] %>
+      <% table.column :first_name, :formatter => lambda {|first_name| first_name.downcase } %>
+    <% end %>
 header::
   (defaults to nil)
   Either false, an object instance (on which #to_s will be invoked) or a Proc (which can optionally take the current column as an option), representing the text to be shown in the header cell of the column.
