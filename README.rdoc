@@ -1,6 +1,7 @@
 = table-for
 
-TableFor is a table builder for a collection of domain objects. It very easily allows the user to specify the columns to render and to override how the table, the header columns, the rows, and the columns are rendered.
+TableFor is a table builder for a collection of domain objects. It very easily allows the user to specify 
+the columns to render and to override how the table, the header columns, the rows, and the columns are rendered.
 
 == Installation
 
@@ -9,7 +10,8 @@ In <b>Rails 3 or Rails 4</b>, add this to your Gemfile.
   gem "table-for"
 
 == Example
-The following example is purposely complex (in many cases, there are easier ways to do what is shown) in order to show a wide range of features that TableFor is capable of:
+The following example is purposely complex (in many cases, there are easier ways to do what is shown) 
+in order to show a wide range of features that TableFor is capable of:
 
   <%= table_for @users, :table_html => { :class => "table table-hover table-bordered" },
                         :sortable => true,
@@ -54,7 +56,8 @@ Produces (with Twitter Bootstrap):
 
 {<img src="https://raw.github.com/hunterae/table-for/master/example_table.png">}[http://example.com]
 
-For detailed instructions on how to run this example, along with comments on every line of the above table, check out the {Example Details}[https://github.com/hunterae/table-for/blob/master/example.rdoc].
+For detailed instructions on how to run this example, along with comments on every line of the above table,
+check out the {Example Details}[https://github.com/hunterae/table-for/blob/master/example.rdoc].
 
 == table_for options
 The first argument to the table_for call will always be the array of domain objects. The second argument is a hash
@@ -84,7 +87,9 @@ link_namespace::
 table_html::
   (defaults to nil)
   Hash to specify the styles, classes, id, and other attributes applied to the table element.
-    <%= table_for @users, :table_html => { :id => "my-table", :class => "table table-bordered", :cellpadding => 2 } %>
+    <%= table_for @users, :table_html => { :id => "my-table",
+                                           :class => "table table-bordered",
+                                           :cellpadding => 2 } %>
       <% table.column :first_name %>
     <% end %>
 thead_html::
@@ -106,7 +111,8 @@ header_column_html::
   Hash to specify the styles, classes, id, and other attributes applied to the header column (th) element.
   The values in this hash can each be a string or a Proc that takes (optionally) the column object as a parameter.
     <%= table_for @users, :header_column => { :style => "font-weight: bold",
-                                              :class => Proc.new {|column| "#{column.name}_header" } %>
+                                              :class => 
+                                                Proc.new {|column| "#{column.name}_header" } %>
       <% table.column :first_name %>
     <% end %>
 tbody_html::
@@ -121,7 +127,8 @@ data_row_html::
   (defaults to nil)
   Hash to specify the styles, classes, id, and other attributes applied to each data row element (tr).
   The values in this hash can each be a string or a Proc that takes (optionally) the current record as a parameter
-    <%= table_for @users, :data_row_html => { :class => lambda { cycle('success', 'error', 'warning', 'info')}, 
+    <%= table_for @users, :data_row_html => { :class => 
+                                                lambda { cycle('success', 'error', 'warning', 'info')}, 
                                               :id => lambda { |user| "user-#{user.id}" } } %>
       <% table.column :first_name %>
     <% end %>
@@ -130,7 +137,9 @@ data_column_html::
   Hash to specify the styles, classes, id, and other attributes applied to the header column (th) element.
   The values in this hash can each be a string or a Proc that takes (optionally) the current_record and (also optionally) the column object as parameters
     <%= table_for @users, :data_column_html => { :style => "font-weight: bold", 
-                                                  :id => Proc.new {|record, column| "record-#{record.id}-#{column.name}" } } %>
+                                                  :id =>
+                                                    Proc.new {|record, column| "record-#{record.id}-#{column.name}" } 
+                                                } %>
       <% table.column :first_name %>
     <% end %>
 tfoot_html::
