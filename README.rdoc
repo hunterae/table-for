@@ -128,7 +128,8 @@ data_row_html::
   Hash to specify the styles, classes, id, and other attributes applied to each data row element (tr).
   The values in this hash can each be a string or a Proc that takes (optionally) the current record as a parameter
     <%= table_for @users, :data_row_html => { :class => 
-                                                lambda { cycle('success', 'error', 'warning', 'info')}, 
+                                                lambda { cycle('success', 'error',
+                                                               'warning', 'info')}, 
                                               :id => lambda { |user| "user-#{user.id}" } } %>
       <% table.column :first_name %>
     <% end %>
@@ -137,8 +138,9 @@ data_column_html::
   Hash to specify the styles, classes, id, and other attributes applied to the header column (th) element.
   The values in this hash can each be a string or a Proc that takes (optionally) the current_record and (also optionally) the column object as parameters
     <%= table_for @users, :data_column_html => { :style => "font-weight: bold", 
-                                                  :id =>
-                                                    Proc.new {|record, column| "record-#{record.id}-#{column.name}" } 
+                                                  :id => Proc.new do |record, column|
+                                                    "record-#{record.id}-#{column.name}"
+                                                  end
                                                 } %>
       <% table.column :first_name %>
     <% end %>
