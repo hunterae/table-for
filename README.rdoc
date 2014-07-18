@@ -138,10 +138,10 @@ data_column_html::
   Hash to specify the styles, classes, id, and other attributes applied to the header column (th) element.
   The values in this hash can each be a string or a Proc that takes (optionally) the current_record and (also optionally) the column object as parameters
     <%= table_for @users, :data_column_html => { :style => "font-weight: bold", 
-                                                  :id => Proc.new do |record, column|
+                                                  :id => Proc.new { |record, column|
                                                     "record-#{record.id}-#{column.name}"
-                                                  end
-                                                } %>
+                                                  }
+                                                } do |table| %>
       <% table.column :first_name %>
     <% end %>
 tfoot_html::
@@ -183,7 +183,7 @@ that label for the header of the column.
 The second argument (or first argument if the name of the column is ommitted) to a table column is a hash and is also optional. It is any combination of the following options:
 
 data::
-  (defaults to nil)
+  (defaults to nil, unless specified on the entire table)
   Either an object instance (on which #to_s will be invoked) or a Proc
   (which can optionally take the current row as an option), representing the text to be shown
   in the data cell of the column.
@@ -192,26 +192,70 @@ data::
       <% table.column :name, :data => Proc.new {|user| user.name.underscore.upcase } %>
     <% end %>
 formatter::
-  (defaults to nil)
+  (defaults to nil, unless specified on the entire table)
   Either a method name, and array with the method to invoke and its arguments, 
-  or a Proc (which will be passed the value requiring formatting,
-  based on the current column's name. The :formatter argument will only work if the column name has been specified.
+  or a Proc (which will be passed the value requiring formatting, based on the current column's name).
+  The :formatter argument will only work if the column name has been specified.
   In such a case, the current iteration row will be sent the name of the column, and the resulting value will be
   what's being formatted. If there is a simple method that needs to be applied to the result, that method name can
   be specified as the formatter, or a series of method names (shown in examples below):
-    <%= table_for @users |table| %>
+    <%= table_for @users do |table| %>
       <% table.column :id, :formatter => :ordinalize %>
-      <% table.column :full_name, :formatter => [:gsub, /d/, "*"] %>
+      <% table.column :created_at, :formatter => [:strftime, "%m/%d/%Y"] %>
       <% table.column :first_name, :formatter => lambda {|first_name| first_name.downcase } %>
+      <%# THE FOLLOWING IS INVALID %>
+      <% table.column :formatter => :ordinalize %>
     <% end %>
 header::
-  (defaults to nil)
-  Either false, an object instance (on which #to_s will be invoked) or a Proc (which can optionally take the current column as an option), representing the text to be shown in the header cell of the column.
-  Note: if the name of the column is not provided, no data will be display in the header cells (i.e <% table.column :data => "Edit" %>)
-sortable:: TODO
-sort_url:: TODO
-order:: TODO
-link_url:: TODO
+  (defaults to nil, unless specified on the entire table)
+  Either false, an object instance (on which #to_s will be invoked) or a Proc
+  (which can optionally take the current column as an option),
+  representing the text to be shown in the header cell of the column. If the :header option is not specified,
+  and no column name is specified (the first argument to the column), then no text will be displayed in the
+  header cell.
+    <%= table_for @users,
+      :header => lambda { |column| 
+        I18n.t("tables.headers.#{column.name.to_s.underscore}",
+          :default => column.name.to_s.titleize)
+      } do |table| %>
+      <% table.column :id, :header => false %>
+      <% table.column :first_name, :header => "FIRST NAME" %>
+      <% table.column :last_name %>
+    <% end %>
+sortable::
+  (defaults to false, unless specified on the entire table)
+  Whether this particular column is sortable, which will render a sort link around the header name with a sort_mode
+  field alternating between values 'asc', 'desc', and 'reset'
+    <%= table_for @users, :sortable => true do |table| %>
+      <% table.column :id, :sortable => false %>
+      <% table.column :first_name %>
+    <% end %>
+sort_url::
+  (defaults to "", a.k.a. the current url, unless specified on the entire table)
+  The sort url that sort links should be generated with
+    <%= table_for @users do |table| %>
+      <% table.column :first_name, :sortable => true, :sort_url => sort_admin_users_path %>
+    <% end %>
+order::
+  (defaults to the current column's name)
+  The sort order (either a string or symbol) that sort links should be generated with
+    <%= table_for @users, :sortable => true do |table| %>
+      <% table.column :first_name, :order => :fname %>
+      <% table.column :last_name, :order => "lname" %>
+      <% table.column :full_name, :order => "lname,fname" %>
+    <% end %>
+  Note: In the last example, the controller would likely need to split the order param on the comma,
+  and apply the sort_mode to each field in the split, i.e.
+    params[:order].split(",").map {|field| "#{field} #{params[:sort_mode]}"}.join(",")
+link_url::
+  (defaults to nil, unless specified on the entire table)
+  Either a string or a Proc (which can optionally take the current record being iterated on)
+  which wraps the data columns content in a link.
+    <%= table_for @users do |table| %>
+      <% table.column :id, :link_url => lambda {|user| edit_admin_user_path(user) } %>
+      <% table.column :header => false, :data => "DELETE", :link_method => :DELETE,
+                      :link_url => lambda { admin_user_path(user) } %>
+    <% end %>
 link_action:: TODO
 link_method:: TODO
 link_confirm:: TODO
