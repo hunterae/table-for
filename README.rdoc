@@ -73,7 +73,8 @@ sortable::
 sort_url::
   (defaults to the current path)
   Sets the url for the header column links. This will only affect columns that are sortable.
-    <%= table_for @users, :sortable => true, :sort_url => sort_admin_users_path %>
+    <%= table_for @users, :sortable => true,
+                          :sort_url => sort_admin_users_path %>
       <% table.column :first_name %>
     <% end %>
 link_namespace::
@@ -110,9 +111,9 @@ header_column_html::
   (defaults to {})
   Hash to specify the styles, classes, id, and other attributes applied to the header column (th) element.
   The values in this hash can each be a string or a Proc that takes (optionally) the column object as a parameter.
-    <%= table_for @users, :header_column_html => { :style => "font-weight: bold",
-                                                   :class => 
-                                                      lambda {|column| "#{column.name}_header" } %>
+    <%= table_for @users, :header_column_html =>
+      { :style => "font-weight: bold",
+        :class => lambda {|column| "#{column.name}_header" } %>
       <% table.column :first_name %>
     <% end %>
 tbody_html::
@@ -127,10 +128,9 @@ data_row_html::
   (defaults to nil)
   Hash to specify the styles, classes, id, and other attributes applied to each data row element (tr).
   The values in this hash can each be a string or a Proc that takes (optionally) the current record as a parameter
-    <%= table_for @users, :data_row_html => { :class => 
-                                                lambda { cycle('success', 'error',
-                                                               'warning', 'info')}, 
-                                              :id => lambda { |user| "user-#{user.id}" } } %>
+    <%= table_for @users, :data_row_html =>
+      { :class => lambda { cycle('success', 'error', 'warning', 'info')}, 
+        :id => lambda { |user| "user-#{user.id}" } } %>
       <% table.column :first_name %>
     <% end %>
 data_column_html::
@@ -138,11 +138,10 @@ data_column_html::
   Hash to specify the styles, classes, id, and other attributes applied to the data column (td) element.
   The values in this hash can each be a string or a Proc that takes (optionally) the current_record and
   (also optionally) the column object as parameters
-    <%= table_for @users, :data_column_html => { :style => "font-weight: bold", 
-                                                  :id => lambda { |record, column|
-                                                    "record-#{record.id}-#{column.name}"
-                                                  }
-                                                } do |table| %>
+    <%= table_for @users, :data_column_html =>
+      { :style => "font-weight: bold", 
+        :id => lambda { |record, column| "record-#{record.id}-#{column.name}"
+      }} do |table| %>
       <% table.column :first_name %>
     <% end %>
 tfoot_html::
@@ -162,7 +161,8 @@ footer_row_html::
 footer_column_html::
   (defaults to nil)
   Hash to specify the styles, classes, id, and other attributes applied to the footer column (td) spanning the entire footer row.
-    <%= table_for @users, :footer_column_html => { :style => 'color: orange' } %>
+    <%= table_for @users, :footer_column_html =>
+      { :style => 'color: orange' } %>
       <% table.column :first_name %>
     <% end %>
 
@@ -203,7 +203,8 @@ formatter::
     <%= table_for @users do |table| %>
       <% table.column :id, :formatter => :ordinalize %>
       <% table.column :created_at, :formatter => [:strftime, "%m/%d/%Y"] %>
-      <% table.column :first_name, :formatter => lambda {|first_name| first_name.downcase } %>
+      <% table.column :first_name, :formatter =>
+        lambda {|first_name| first_name.downcase } %>
       <%# THE FOLLOWING IS INVALID %>
       <% table.column :formatter => :ordinalize %>
     <% end %>
@@ -235,7 +236,8 @@ sort_url::
   (defaults to "", a.k.a. the current url, unless specified on the entire table)
   The sort url that sort links should be generated with
     <%= table_for @users do |table| %>
-      <% table.column :first_name, :sortable => true, :sort_url => sort_admin_users_path %>
+      <% table.column :first_name, :sortable => true,
+                                   :sort_url => sort_admin_users_path %>
     <% end %>
 order::
   (defaults to the current column's name)
@@ -286,13 +288,14 @@ link_html::
       <% table.column :data => "Delete", :link_method => :DELETE,
                       :link_html => {:style => "color: RED; font-weight: BOLD"} %>
     <% end %>
-link_namespace:
+link_namespace::
   (defaults to nil, unless specified on the entire table; normally this option would be specified on the entire table)
   Sets the namespace for the link.
   For example, a link_namespace of admin would try to build the link within the admin namespace in the routes.
   This can be specified as a string, an array, a domain object, or a symbol,
     <%= table_for @users %>
-      <% table.column :first_name, :link_namespace => [:admin, @post, :comments], :link => true %>
+      <% table.column :first_name, :link_namespace =>
+        [:admin, @post, :comments], :link => true %>
     <% end %>
 link::
   (defaults to false)
@@ -307,11 +310,10 @@ data_column_html::
   Hash to specify the styles, classes, id, and other attributes applied to the data column (td) element.
   The values in this hash can each be a string or a Proc that takes (optionally) the current_record and
   (also optionally) the column object as parameters
-    <%= table_for @users, :data_column_html => { :style => "font-weight: bold", 
-                                                  :id => lambda { |record, column|
-                                                    "record-#{record.id}-#{column.name}"
-                                                  }
-                                                } do |table| %>
+    <%= table_for @users, :data_column_html =>
+      { :style => "font-weight: bold", 
+        :id => lambda { |record, column| "record-#{record.id}-#{column.name}"
+      }} do |table| %>
       <% table.column :first_name %>
       <% table.column :last_name, :data_column_html => {:style => "color: red"} %>
     <% end %>
@@ -319,11 +321,12 @@ header_column_html::
   (defaults to {}, unless specified on the entire table)
   Hash to specify the styles, classes, id, and other attributes applied to the header column (th) element.
   The values in this hash can each be a string or a Proc that takes (optionally) the column object as a parameter.
-    <%= table_for @users, :header_column_html => { :style => "font-weight: bold",
-                                                   :class => 
-                                                     lambda {|column| "#{column.name}_header" } %>
+    <%= table_for @users, :header_column_html =>
+      { :style => "font-weight: bold",
+        :class => lambda {|column| "#{column.name}_header" } %>
       <% table.column :first_name %>
-      <% table.column :last_name, :header_column_html => {:style => "font-size: 20px"} %>
+      <% table.column :last_name, :header_column_html =>
+        {:style => "font-size: 20px"} %>
     <% end %>
 
 == table_for header options
