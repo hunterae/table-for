@@ -190,7 +190,8 @@ data::
   in the data cell of the column.
     <%= table_for @users do |table| %>
       <% table.column :data => "Edit" %>
-      <% table.column :name, :data => lambda {|user| user.name.underscore.upcase } %>
+      <% table.column :name, :data =>
+        lambda {|user| user.name.underscore.upcase } %>
     <% end %>
 formatter::
   (defaults to nil, unless specified on the entire table)
@@ -249,14 +250,19 @@ order::
     <% end %>
   Note: In the last example, the controller would likely need to split the order param on the comma,
   and apply the sort_mode to each field in the split, i.e.
-    params[:order].split(",").map {|field| "#{field} #{params[:sort_mode]}"}.join(",")
+    params[:order].split(",").map do |field|
+      "#{field} #{params[:sort_mode]}"
+    end.join(",")
 link_url::
   (defaults to nil, unless specified on the entire table)
   Either a string or a Proc (which can optionally take the current record being iterated on)
   which wraps the data columns content in a link.
     <%= table_for @users do |table| %>
-      <% table.column :id, :link_url => lambda {|user| edit_admin_user_path(user) } %>
-      <% table.column :header => false, :data => "DELETE", :link_method => :DELETE,
+      <% table.column :id, :link_url =>
+        lambda {|user| edit_admin_user_path(user) } %>
+      <% table.column :header => false,
+                      :data => "DELETE",
+                      :link_method => :DELETE,
                       :link_url => lambda { admin_user_path(user) } %>
     <% end %>
 link_action::
@@ -279,14 +285,16 @@ link_confirm::
   A confirmation message (javascript) that will be displayed when the user clicks the link
     <%= table_for @users do |table| %>
       <% table.column :data => "Delete", :link_method => :DELETE,
-                      :link_confirm => "Are you sure you want to delete this user?" %>
+                      :link_confirm =>
+                        "Are you sure you want to delete this user?" %>
     <% end %>
 link_html::
   (defaults to {}, unless specified on the entire table)
   Hash to specify the styles, classes, id, and other attributes applied to the link element.
     <%= table_for @users do |table| %>
       <% table.column :data => "Delete", :link_method => :DELETE,
-                      :link_html => {:style => "color: RED; font-weight: BOLD"} %>
+                      :link_html =>
+                        {:style => "color: RED; font-weight: BOLD"} %>
     <% end %>
 link_namespace::
   (defaults to nil, unless specified on the entire table; normally this option would be specified on the entire table)
@@ -315,7 +323,8 @@ data_column_html::
         :id => lambda { |record, column| "record-#{record.id}-#{column.name}"
       }} do |table| %>
       <% table.column :first_name %>
-      <% table.column :last_name, :data_column_html => {:style => "color: red"} %>
+      <% table.column :last_name, :data_column_html =>
+        {:style => "color: red"} %>
     <% end %>
 header_column_html::
   (defaults to {}, unless specified on the entire table)
