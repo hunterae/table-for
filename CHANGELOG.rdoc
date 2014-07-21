@@ -1,3 +1,7 @@
+3.2.1
+* Added ability to configure sort_mode order, i.e. if sort links generate sort_modes in :asc, :desc order, or have different labels
+than :asc and :desc
+
 3.2.0
 * Changed the way configuration is done for TableFor. It is still done through TableFor.setup {|config|}, but some of the options have changed. Namely, the new configuration options are thead_tag, tbody_tag, tfoot_tag. If you do not want thead, tbody, or tfoot tags to be rendered, you can specify this in the setup block as follows: TableFor.setup {|config| config.thead_tag = nil; config.tbody_tag = nil; config.tfoot_tag = nil }. In addition, you can also globally define styles for the table as follows: TableFor.setup {|config| config.table_html = {:class => "table striped"}}. This undoes what was was released in 2.1.0
 
@@ -6,9 +10,6 @@
 
 3.1.0
 * Since templating was moved from blocks into its own gem with_template, TableFor::Base now extends WithTemplate::Base instead of Blocks::Base.
-
-3.0.0
-* TODO
 
 2.2.0 (August 16, 2013)
 * Upgraded to blocks 2.2.0 and modified calls to evaluated_proc and evaluated_procs to call_if_proc and call_each_hash_value_if_proc

@@ -100,8 +100,8 @@ describe TableFor::Base do
       header_column_html[:class].should eql "sorting_desc"
     end
 
-    it "should add a 'sorting' class to the header_column_html class if a column is sortable and it is reset mode" do
-      @view.expects(:params).at_least_once.returns(:order => @column.name.to_s, :sort_mode => "reset")
+    it "should add a 'sorting' class to the header_column_html class if a column is sortable and it is blank sort mode" do
+      @view.expects(:params).at_least_once.returns(:order => @column.name.to_s, :sort_mode => "")
       header_column_html = @base.header_column_html(@column, :sortable => true)
       header_column_html[:class].should eql "sorting"
     end
@@ -126,7 +126,7 @@ describe TableFor::Base do
 
     it "should be able to generate a sort link for a column if that column is sortable and it is already sorted in desc order" do
       @view.expects(:params).at_least_once.returns(:order => @column.name.to_s, :sort_mode => "desc")
-      @view.expects(:link_to).with(@column.name.to_s.titleize, "?order=#{@column.name}&sort_mode=reset").returns "my link"
+      @view.expects(:link_to).with(@column.name.to_s.titleize, "?order=#{@column.name}&sort_mode=").returns "my link"
       @base.header_sort_link(@column, :sortable => true).should eql "my link"
     end
 

@@ -25,7 +25,12 @@ module TableFor
       header_column_html = call_each_hash_value_with_params(options[:header_column_html], column)
       if options[:sortable]
         order = options[:order] ? options[:order].to_s : column.name.to_s
-        sort_class = (view.params[:order] != order || view.params[:sort_mode] == "reset") ? "sorting" : (view.params[:sort_mode] == "desc" ? "sorting_desc" : "sorting_asc")
+
+        sort_modes = TableFor.config.sort_modes
+        current_sort_mode = (view.params[:order] != order || view.params[:sort_mode].blank?) ? nil : view.params[:sort_mode]
+        current_sort_mode = sort_modes[sort_modes.index(current_sort_mode.to_sym)] rescue nil if current_sort_mode
+        sort_class = "sorting#{"_#{current_sort_mode}" if current_sort_mode}"
+
         header_column_html[:class] = (header_column_html[:class] ? "#{header_column_html[:class]} #{sort_class}" : sort_class)
       end
       header_column_html
@@ -76,8 +81,17 @@ module TableFor
     def header_sort_link(column, options={}, &block)
       if options[:sortable] && (options[:header] || !column.anonymous)
         order = options[:order] ? options[:order].to_s : column.name.to_s
-        sort_mode = (view.params[:order] != order || view.params[:sort_mode] == "reset") ? "asc" : (view.params[:sort_mode] == "desc" ? "reset" : "desc")
-        parameters = view.params.merge(:order => order, :sort_mode => sort_mode)
+
+        sort_modes = TableFor.config.sort_modes
+        current_sort_mode = (view.params[:order] != order || view.params[:sort_mode].blank?) ? nil : view.params[:sort_mode]
+        next_sort_mode_index = sort_modes.index(current_sort_mode.to_sym) + 1 rescue 0
+        if next_sort_mode_index == sort_modes.length
+          next_sort_mode = nil
+        else
+          next_sort_mode = sort_modes[next_sort_mode_index]
+        end
+
+        parameters = view.params.merge(:order => order, :sort_mode => next_sort_mode)
         parameters.delete(:action)
         parameters.delete(:controller)
         url = options[:sort_url] ? options[:sort_url] : ""

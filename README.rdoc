@@ -365,9 +365,9 @@ this should still be done on the column call:
   <% end %>
 
 In the above example, the first name column header will cycle between classes of
-  "sorting_asc", "sorting_desc", and "sorting", while the sort link itself in the header
-  will cycle between sort_mode parameters of "asc", "desc", and "reset". (This is actually
-  the default TableFor sorting behavior)
+"sorting_asc", "sorting_desc", and "sorting", while the sort link itself in the header
+will cycle between sort_mode parameters of "asc", "desc", and "reset". (This is actually
+the default TableFor sorting behavior)
 
 == table_for footer options
 There are two ways to specify a footer for a table.
@@ -415,6 +415,13 @@ tbody_tag::
 tfoot_tag::
   (defaults to :tfoot)
   Set this to nil if a tbody tag should not be rendered around the footer row of the table.
+
+sort_modes::
+  (defaults to [:asc, :desc])
+  Sets the order of sort_mode links. A particular sortable column will, by default, generate a sort link
+  with sort_mode set to :asc. If the sort_mode is already :asc for that column, then it generate the sort
+  link with sort_mode set to :desc. Finally, if the sort_mode is already :desc for that column, it will
+  generate a sort link with sort_mode blank.
 
 == Internationalization
 +table-for+ can do some dirty job for you, if you are using i18n by common rails conventions. For example, you have following in your en.yml:

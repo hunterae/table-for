@@ -396,14 +396,14 @@ describe "table_for" do
       end
       xml = XmlSimple.xml_in(%%
         <table>
-          <thead><tr><th class="sorting_desc"><a href="?order=email&amp;sort_mode=reset">Email</a></th></tr></thead>
+          <thead><tr><th class="sorting_desc"><a href="?order=email&amp;sort_mode=">Email</a></th></tr></thead>
           <tbody><tr><td>andrew.hunter@livingsocial.com</td></tr></tbody>
         </table>%)
       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
     end
 
     it "should add a 'sorting' class to the 'th' element and a link around the header content if a column is sortable and the sort_mode is in reset mode" do
-      @view.expects(:params).at_least_once.returns({:order => "email", :sort_mode => "reset"})
+      @view.expects(:params).at_least_once.returns({:order => "email", :sort_mode => ""})
       buffer = @view.table_for @users[0,1] do |table|
         table.column :email, :sortable => true
       end

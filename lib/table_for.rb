@@ -12,6 +12,7 @@ module TableFor
   @@config.thead_tag = :thead
   @@config.tbody_tag = :tbody
   @@config.tfoot_tag = :tfoot
+  @@config.sort_modes = [:asc, :desc]
 
   # Default way to setup TableFor
   def self.setup
