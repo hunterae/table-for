@@ -19,13 +19,14 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "rails", ">= 3.0.0"
-  spec.add_dependency "with_template", "~> 0.0.6"
+  spec.add_dependency "with_template", "~> 0.1.0"
 
   spec.add_development_dependency "rspec-rails", ">= 2.0.0.beta.20"
   spec.add_development_dependency "mocha", "0.10.3"
   spec.add_development_dependency "xml-simple", "1.1.1"
-  spec.add_development_dependency "supermodel", "0.1.4"
+  spec.add_development_dependency "supermodel"
   spec.add_development_dependency "sqlite3"
-  spec.add_development_dependency "with_model", "0.2.6"
-  spec.add_development_dependency "debugger"
+  spec.add_development_dependency "with_model"
+  spec.add_development_dependency "byebug"
+  spec.add_development_dependency "nokogiri"
 end

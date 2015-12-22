@@ -1,3 +1,10 @@
+3.4.0
+* Links options that are applied to a column will now generate the link even if you override
+column. In haml, this example pointed out by @noctivityinc, now works:
+  = t.column link_action: :edit do
+   %i.fa.fa-pencil
+* Fixed generation of link_confirm and link_method to apply to the links data element.
+
 3.2.1
 * Added ability to configure sort_mode order, i.e. if sort links generate sort_modes in :asc, :desc order, or have different labels
 than :asc and :desc

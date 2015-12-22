@@ -6,7 +6,7 @@ describe TableFor::ViewAdditions do
     @view = @view_class.new
     @view_class.send(:include, ActionView::Helpers::TextHelper)
     @view_class.send(:include, TableFor::ViewAdditions::ClassMethods)
-    @view_class.send(:include, Blocks::ViewAdditions::ClassMethods)
+    @view_class.send(:include, Blocks::ViewAdditions)
     @records = [OpenStruct.new(:id => 1)]
     @column = stub(:name => :my_column)
   end

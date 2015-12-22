@@ -4,7 +4,6 @@ require 'blocks'
 module TableFor
   class Base < WithTemplate::Base
     alias columns queued_blocks
-    alias column queue
 
     attr_accessor :current_record
     alias_method :current_row, :current_record
@@ -19,6 +18,31 @@ module TableFor
 
     def footer(options={}, &block)
       define(:footer_content, options, &block)
+    end
+
+    def column(*args, &block)
+      options = args.extract_options!
+      queue(*args, options, &block)
+      if options[:link_url] ||
+         options[:link_action] ||
+         options[:link_method] ||
+         options[:link_confirm] ||
+         options[:link]
+        around(columns.last.name) do |content_block, record, column, options|
+          options = options.merge(column.options)
+          url = if options[:link_url]
+            call_with_params(options[:link_url], record)
+          else
+            [options[:link_action], options[:link_namespace], record].flatten.compact
+          end
+          html_options = {data: {}}
+          html_options[:data][:method] = options[:link_method] if options[:link_method].present?
+          html_options[:data][:confirm] = options[:link_confirm] if options[:link_confirm].present?
+          html_options = html_options.deep_merge(options[:link_html] || {})
+          view.link_to content_block.call, url, html_options
+        end
+      end
+      nil
     end
 
     def header_column_html(column, options={})
@@ -51,26 +75,16 @@ module TableFor
     end
 
     def cell_content(record, column, options={})
-      if options[:link_url] || options[:link_action] || options[:link_method] || options[:link_confirm] || options[:link]
-        url = options[:link_url] ? call_with_params(options[:link_url], record) : [options[:link_action], options[:link_namespace], record].flatten
-      end
-
       if options[:formatter]
         if options[:formatter].is_a?(Proc)
-          content = call_with_params(options[:formatter], record.send(column.name), options)
+          call_with_params(options[:formatter], record.send(column.name), options)
         else
-          content = record.send(column.name).try(*options[:formatter])
+          record.send(column.name).try(*options[:formatter])
         end
       elsif options[:data] || [:edit, :show, :delete].include?(column.name)
-        content = call_with_params(options[:data], record)
+        call_with_params(options[:data], record)
       else
-        content = record.send(column.name)
-      end
-
-      if content.blank? || url.blank? || options[:link] == false
-        content
-      elsif url
-        view.link_to content, url, {:method => options[:link_method], :confirm => options[:link_confirm]}.merge(options[:link_html])
+        record.send(column.name)
       end
     end
 

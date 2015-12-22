@@ -3,6 +3,7 @@ require "spec_helper"
 describe "table_for" do
   with_model :user do
     table do |t|
+      t.integer "id"
       t.string "email"
       t.string "first_name"
       t.string "last_name"
@@ -17,11 +18,14 @@ describe "table_for" do
   end
 
   before :each do
-    User.create! :email => "andrew.hunter@livingsocial.com", :first_name => "Andrew", :last_name => "Hunter"
-    User.create! :email => "todd.fisher@livingsocial.com", :first_name => "Todd", :last_name => "Fisher"
-    User.create! :email => "jon.phillips@livingsocial.com", :first_name => "Jon", :last_name => "Phillips"
+    User.create! id: 1, :email => "andrew.hunter@livingsocial.com", :first_name => "Andrew", :last_name => "Hunter"
+    User.create! id: 2, :email => "todd.fisher@livingsocial.com", :first_name => "Todd", :last_name => "Fisher"
+    User.create! id: 3, :email => "jon.phillips@livingsocial.com", :first_name => "Jon", :last_name => "Phillips"
     @users = User.all
     @view = ActionView::Base.new("app/views")
+    @view.class.send(:define_method, :user_path) do |user|
+      "/users/#{user.id}"
+    end
   end
 
   it "should be able render a table with email and first and last name columns" do
@@ -59,8 +63,8 @@ describe "table_for" do
 
     it "should be able to specify html attributes" do
       buffer = @view.table_for @users, :table_html => {:style => "background-color: orange"}
-      xml = XmlSimple.xml_in(%%<table style="background-color: orange"><thead><tr></tr></thead><tbody><tr></tr><tr></tr><tr></tr></tbody></table>%)
-      XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
+      xml = XmlSimple.xml_in(%%<table style="background-color: orange"><thead><tr></tr></thead><tbody><tr></tr><tr></tr><tr></tr></tbody></table>%, keeproot: true)
+      XmlSimple.xml_in(buffer, normalisespace: 2, keeproot: true).should eql xml
     end
   end
 
@@ -162,12 +166,7 @@ describe "table_for" do
         table.column :last_name
       end
 
-      xml = XmlSimple.xml_in(%%
-        <table>
-          <thead><tr><th>Repeated Column</th><th>Repeated Column</th></tr></thead>
-          <tbody><tr><td>Andrew</td><td>Hunter</td></tr></tbody>
-        </table>%)
-      XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
+      html_includes?(buffer, "<thead><tr><th>Repeated Column</th><th>Repeated Column</th></tr></thead>")
     end
 
     it "should be able to specify html attributes" do
@@ -177,7 +176,7 @@ describe "table_for" do
       xml = XmlSimple.xml_in(%%<table><thead><tr><th class="sortable">First Name</th></tr></thead><tbody><tr><td>Andrew</td></tr></tbody></table>%)
       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
     end
-    
+
     it "should be able to dynamically specify column attributes" do
       buffer = @view.table_for @users[0, 1], :header_column_html => {:class => lambda {@view.cycle("even", "odd")},
                                                               :id => lambda {|column| "#{column.name.to_s}_header"}} do |table|
@@ -201,81 +200,6 @@ describe "table_for" do
       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
     end
   end
-  
-  # describe "edit_header block" do
-  #   it "should be able to replace the edit_header block" do
-  #     @view.expects(:edit_user_path).with(User.first).returns("/users/1/edit")
-  #     buffer = @view.table_for @users[0,1] do |table|
-  #       table.define :edit_header do
-  #         "Edit"
-  #       end
-  #       table.column :edit
-  #     end
-  # 
-  #     xml = XmlSimple.xml_in(%%
-  #       <table>
-  #         <thead><tr><th>Edit</th></tr></thead>
-  #         <tbody>
-  #           <tr>
-  #             <td>
-  #               <a href="/users/1/edit">Edit</a>
-  #             </td>
-  #           </tr>
-  #         </tbody>
-  #       </table>%)
-  #     XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #   end
-  # end
-  # 
-  # describe "delete_header block" do
-  #   it "should be able to replace the delete_header block" do
-  #     @view.expects(:user_path).with(User.first).returns("/users/1")
-  #     buffer = @view.table_for @users[0,1] do |table|
-  #       table.define :delete_header do
-  #         "Delete"
-  #       end
-  #       table.column :delete
-  #     end
-  # 
-  #     xml = XmlSimple.xml_in(%%
-  #       <table>
-  #         <thead><tr><th>Delete</th></tr></thead>
-  #         <tbody>
-  #           <tr>
-  #             <td>
-  #               <a href="/users/1" rel="nofollow" data-method="delete" data-confirm="Are you sure you want to delete this User?">Delete</a>
-  #             </td>
-  #           </tr>
-  #         </tbody>
-  #       </table>%)
-  #     XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #   end
-  # end
-  # 
-  # describe "show_header block" do
-  #   it "should be able to replace the show_header block" do
-  #     @view.expects(:user_path).with(User.first).returns("/users/1")
-  #     buffer = @view.table_for @users[0,1] do |table|
-  #       table.define :show_header do
-  #         "Show"
-  #       end
-  #       table.column :show
-  #     end
-  # 
-  #     xml = XmlSimple.xml_in(%%
-  #       <table>
-  #         <thead><tr><th>Show</th></tr></thead>
-  #         <tbody>
-  #           <tr>
-  #             <td>
-  #               <a href="/users/1">Show</a>
-  #             </td>
-  #           </tr>
-  #         </tbody>
-  #       </table>%)
-  #     XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #   end
-  # end
 
   describe "column header contents block" do
     it "should be able to override the header for a particular column" do
@@ -563,7 +487,7 @@ describe "table_for" do
       xml = XmlSimple.xml_in(%%<table><thead><tr><th>First Name</th></tr></thead><tbody><tr><td class="data">Andrew</td></tr></tbody></table>%)
       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
     end
-    
+
     it "should be able to dynamically specify column attributes" do
       buffer = @view.table_for @users[0, 1], :data_column_html => {:class => lambda {@view.cycle("even", "odd")},
                                                               :id => lambda {|user, column| "#{column.name.to_s}_data"}} do |table|
@@ -607,358 +531,23 @@ describe "table_for" do
     end
   end
 
-  # describe "edit block" do
-  #     it "should be able to replace the edit block" do
-  #       buffer = @view.table_for @users[0,1] do |table|
-  #         table.define :edit do
-  #           "Edit Link"
-  #         end
-  #         table.column :edit
-  #       end
-  # 
-  #       xml = XmlSimple.xml_in(%%
-  #         <table>
-  #           <thead><tr><th></th></tr></thead>
-  #           <tbody><tr><td>Edit Link</td></tr></tbody>
-  #         </table>%)
-  #       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #     end
-  # 
-  #     it "should be able to create an edit column" do
-  #       @view.expects(:edit_user_path).with(User.first).returns("/users/1/edit")
-  # 
-  #       buffer = @view.table_for @users[0,1] do |table|
-  #         table.column :edit
-  #       end
-  # 
-  #       xml = XmlSimple.xml_in(%%
-  #         <table>
-  #           <thead><tr><th></th></tr></thead>
-  #           <tbody><tr><td><a href="/users/1/edit">Edit</a></td></tr></tbody>
-  #         </table>%)
-  #       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #     end
-  # 
-  #     it "should be able to update the label for an edit column" do
-  #       @view.expects(:edit_user_path).with(User.first).returns("/users/1/edit")
-  # 
-  #       buffer = @view.table_for @users[0,1] do |table|
-  #         table.column :edit, :data => "Modify"
-  #       end
-  # 
-  #       xml = XmlSimple.xml_in(%%
-  #         <table>
-  #           <thead><tr><th></th></tr></thead>
-  #           <tbody><tr><td><a href="/users/1/edit">Modify</a></td></tr></tbody>
-  #         </table>%)
-  #       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #     end
-  # 
-  #     it "should be able to specify the action for an edit column" do
-  #       @view.expects(:modify_user_path).with(User.first).returns("/users/1/modify")
-  # 
-  #       buffer = @view.table_for @users[0,1] do |table|
-  #         table.column :edit, :action => :modify
-  #       end
-  # 
-  #       xml = XmlSimple.xml_in(%%
-  #         <table>
-  #           <thead><tr><th></th></tr></thead>
-  #           <tbody><tr><td><a href="/users/1/modify">Edit</a></td></tr></tbody>
-  #         </table>%)
-  #       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #     end
-  # 
-  #     it "should be able to specify the scope for an edit column" do
-  #       @view.expects(:edit_user_test_user_path).with(User.last, User.first).returns("/users/3/test/users/1/edit")
-  # 
-  #       buffer = @view.table_for @users[0,1] do |table|
-  #         table.column :edit, :scope => [User.last, :test]
-  #       end
-  # 
-  #       xml = XmlSimple.xml_in(%%
-  #         <table>
-  #           <thead><tr><th></th></tr></thead>
-  #           <tbody><tr><td><a href="/users/3/test/users/1/edit">Edit</a></td></tr></tbody>
-  #         </table>%)
-  #       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #     end
-  # 
-  #     it "should be able to specify the html for an edit column" do
-  #       @view.expects(:edit_user_path).with(User.first).returns("/users/1/edit")
-  # 
-  #       buffer = @view.table_for @users[0,1] do |table|
-  #         table.column :edit, :link_html => {:style => "color:red"}
-  #       end
-  # 
-  #       xml = XmlSimple.xml_in(%%
-  #         <table>
-  #           <thead><tr><th></th></tr></thead>
-  #           <tbody><tr><td><a href="/users/1/edit" style="color:red">Edit</a></td></tr></tbody>
-  #         </table>%)
-  #       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #     end
-  #   end
-  # 
-  # describe "show block" do
-  #   it "should be able to replace the show block" do
-  #     buffer = @view.table_for @users[0,1] do |table|
-  #       table.define :show do
-  #         "Show Link"
-  #       end
-  #       table.column :show
-  #     end
-  # 
-  #     xml = XmlSimple.xml_in(%%
-  #       <table>
-  #         <thead><tr><th></th></tr></thead>
-  #         <tbody><tr><td>Show Link</td></tr></tbody>
-  #       </table>%)
-  #     XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #   end
-  # 
-  #   it "should be able to create a show column" do
-  #     @view.expects(:user_path).with(User.first).returns("/users/1")
-  # 
-  #     buffer = @view.table_for @users[0,1] do |table|
-  #       table.column :show
-  #     end
-  # 
-  #     xml = XmlSimple.xml_in(%%
-  #       <table>
-  #         <thead><tr><th></th></tr></thead>
-  #         <tbody><tr><td><a href="/users/1">Show</a></td></tr></tbody>
-  #       </table>%)
-  #     XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #   end
-  # 
-  #   it "should be able to update the label for an show column" do
-  #     @view.expects(:user_path).with(User.first).returns("/users/1")
-  # 
-  #     buffer = @view.table_for @users[0,1] do |table|
-  #       table.column :show, :data => "Display"
-  #     end
-  # 
-  #     xml = XmlSimple.xml_in(%%
-  #       <table>
-  #         <thead><tr><th></th></tr></thead>
-  #         <tbody><tr><td><a href="/users/1">Display</a></td></tr></tbody>
-  #       </table>%)
-  #     XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #   end
-  # 
-  #   it "should be able to specify the action for an show column" do
-  #     @view.expects(:display_user_path).with(User.first).returns("/users/1/display")
-  # 
-  #     buffer = @view.table_for @users[0,1] do |table|
-  #       table.column :show, :action => :display
-  #     end
-  # 
-  #     xml = XmlSimple.xml_in(%%
-  #       <table>
-  #         <thead><tr><th></th></tr></thead>
-  #         <tbody><tr><td><a href="/users/1/display">Show</a></td></tr></tbody>
-  #       </table>%)
-  #     XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #   end
-  # 
-  #   it "should be able to specify the scope for an show column" do
-  #     @view.expects(:user_test_user_path).with(User.last, User.first).returns("/users/3/test/users/1")
-  # 
-  #     buffer = @view.table_for @users[0,1] do |table|
-  #       table.column :show, :scope => [User.last, :test]
-  #     end
-  # 
-  #     xml = XmlSimple.xml_in(%%
-  #       <table>
-  #         <thead><tr><th></th></tr></thead>
-  #         <tbody><tr><td><a href="/users/3/test/users/1">Show</a></td></tr></tbody>
-  #       </table>%)
-  #     XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #   end
-  # 
-  #   it "should be able to specify the html for an show column" do
-  #     @view.expects(:user_path).with(User.first).returns("/users/1")
-  # 
-  #     buffer = @view.table_for @users[0,1] do |table|
-  #       table.column :show, :link_html => {:style => "color:red"}
-  #     end
-  # 
-  #     xml = XmlSimple.xml_in(%%
-  #       <table>
-  #         <thead><tr><th></th></tr></thead>
-  #         <tbody><tr><td><a href="/users/1" style="color:red">Show</a></td></tr></tbody>
-  #       </table>%)
-  #     XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #   end
-  # end
-  # 
-  # describe "delete block" do
-  #   it "should be able to replace the delete block" do
-  #     buffer = @view.table_for @users[0,1] do |table|
-  #       table.define :delete do
-  #         "Delete Link"
-  #       end
-  #       table.column :delete
-  #     end
-  # 
-  #     xml = XmlSimple.xml_in(%%
-  #       <table>
-  #         <thead><tr><th></th></tr></thead>
-  #         <tbody><tr><td>Delete Link</td></tr></tbody>
-  #       </table>%)
-  #     XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #   end
-  # 
-  #   it "should be able to create a delete column" do
-  #     @view.expects(:user_path).with(User.first).returns("/users/1")
-  # 
-  #     buffer = @view.table_for @users[0,1] do |table|
-  #       table.column :delete
-  #     end
-  # 
-  #     xml = XmlSimple.xml_in(%%
-  #       <table>
-  #         <thead><tr><th></th></tr></thead>
-  #         <tbody>
-  #           <tr>
-  #             <td>
-  #               <a href="/users/1" rel="nofollow" data-method="delete" data-confirm="Are you sure you want to delete this User?">Delete</a>
-  #             </td>
-  #           </tr>
-  #         </tbody>
-  #       </table>%)
-  #     XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #   end
-  # 
-  #   it "should be able to update the label for an delete column" do
-  #     @view.expects(:user_path).with(User.first).returns("/users/1")
-  # 
-  #     buffer = @view.table_for @users[0,1] do |table|
-  #       table.column :delete, :data => "Destroy"
-  #     end
-  # 
-  #     xml = XmlSimple.xml_in(%%
-  #       <table>
-  #         <thead><tr><th></th></tr></thead>
-  #         <tbody>
-  #           <tr>
-  #             <td>
-  #               <a href="/users/1" rel="nofollow" data-method="delete" data-confirm="Are you sure you want to delete this User?">Destroy</a>
-  #             </td>
-  #           </tr>
-  #         </tbody>
-  #       </table>%)
-  #     XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #   end
-  # 
-  #   it "should be able to specify the action for an delete column" do
-  #     @view.expects(:dispose_user_path).with(User.first).returns("/users/1/dispose")
-  # 
-  #     buffer = @view.table_for @users[0,1] do |table|
-  #       table.column :delete, :action => :dispose
-  #     end
-  # 
-  #     xml = XmlSimple.xml_in(%%
-  #       <table>
-  #         <thead><tr><th></th></tr></thead>
-  #         <tbody>
-  #           <tr>
-  #             <td>
-  #               <a href="/users/1/dispose" rel="nofollow" data-method="delete" data-confirm="Are you sure you want to delete this User?">Delete</a>
-  #             </td>
-  #           </tr>
-  #         </tbody>
-  #       </table>%)
-  #     XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #   end
-  # 
-  #   it "should be able to specify the scope for a delete column" do
-  #     @view.expects(:user_test_user_path).with(User.last, User.first).returns("/users/3/test/users/1")
-  # 
-  #     buffer = @view.table_for @users[0,1] do |table|
-  #       table.column :delete, :scope => [User.last, :test]
-  #     end
-  # 
-  #     xml = XmlSimple.xml_in(%%
-  #       <table>
-  #         <thead><tr><th></th></tr></thead>
-  #         <tbody>
-  #           <tr>
-  #             <td>
-  #               <a href="/users/3/test/users/1" rel="nofollow" data-method="delete" data-confirm="Are you sure you want to delete this User?">Delete</a>
-  #             </td>
-  #           </tr>
-  #         </tbody>
-  #       </table>%)
-  #     XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #   end
-  # 
-  #   it "should be able to specify the html for a delete column" do
-  #     @view.expects(:user_path).with(User.first).returns("/users/1")
-  # 
-  #     buffer = @view.table_for @users[0,1] do |table|
-  #       table.column :delete, :link_html => {:style => "color:red"}
-  #     end
-  # 
-  #     xml = XmlSimple.xml_in(%%
-  #       <table>
-  #         <thead><tr><th></th></tr></thead>
-  #         <tbody>
-  #           <tr>
-  #             <td>
-  #               <a href="/users/1" style="color:red" rel="nofollow" data-method="delete" data-confirm="Are you sure you want to delete this User?">Delete</a>
-  #             </td>
-  #           </tr>
-  #         </tbody>
-  #       </table>%)
-  #     XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #   end
-  # 
-  #   it "should be able to override the delete confirmation message for a delete link" do
-  #     @view.expects(:user_path).with(User.first).returns("/users/1")
-  # 
-  #     buffer = @view.table_for @users[0,1] do |table|
-  #       table.column :delete, :confirm => "Are you sure?"
-  #     end
-  # 
-  #     xml = XmlSimple.xml_in(%%
-  #       <table>
-  #         <thead><tr><th></th></tr></thead>
-  #         <tbody>
-  #           <tr>
-  #             <td>
-  #               <a href="/users/1" rel="nofollow" data-method="delete" data-confirm="Are you sure?">Delete</a>
-  #             </td>
-  #           </tr>
-  #         </tbody>
-  #       </table>%)
-  #     XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #   end
-  # 
-  #   it "should be able to override the method for a delete link" do
-  #     @view.expects(:user_path).with(User.first).returns("/users/1")
-  # 
-  #     buffer = @view.table_for @users[0,1] do |table|
-  #       table.column :delete, :method => :get
-  #     end
-  # 
-  #     xml = XmlSimple.xml_in(%%
-  #       <table>
-  #         <thead><tr><th></th></tr></thead>
-  #         <tbody>
-  #           <tr>
-  #             <td>
-  #               <a href="/users/1" data-method="get" data-confirm="Are you sure you want to delete this User?">Delete</a>
-  #             </td>
-  #           </tr>
-  #         </tbody>
-  #       </table>%)
-  #     XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
-  #   end
-  # end
-
   describe "column data contents block" do
+    context "when passing a link param" do
+      it "render a link surrounding a table cell's content when it is true" do
+        buffer = @view.table_for @users do |table|
+          table.column :email, link: true
+        end
+        html_includes?(buffer, "<a href='/users/1'>andrew.hunter@livingsocial.com</a>")
+      end
+    end
+
+    it "should allow a link_url proc to render a link surrounding a table cell's content" do
+      buffer = @view.table_for @users do |table|
+        table.column :email, link_url: lambda {|user| "/admin/users/#{user.id}"}
+      end
+      html_includes?(buffer, "<a href='/admin/users/1'>andrew.hunter@livingsocial.com</a>")
+    end
+
     it "should be able to replace an individual column data contents block" do
       buffer = @view.table_for @users[0,1] do |table|
         table.column :email, :header => "Email Address"

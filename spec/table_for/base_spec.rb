@@ -4,7 +4,7 @@ describe TableFor::Base do
   before(:each) do
     @view_class = Class.new
     @view = @view_class.new
-    @view_class.send(:include, Blocks::ViewAdditions::ClassMethods)
+    @view_class.send(:include, Blocks::ViewAdditions)
     @base = TableFor::Base.new(@view)
     @records = [OpenStruct.new(:id => 1)]
     @column = stub(:name => :my_column, :anonymous => false)
@@ -60,10 +60,6 @@ describe TableFor::Base do
       block.options.should eql({})
     end
   end
-
-  # describe "#table_html" do
-  #   
-  # end
 
   describe "#header_column_html" do
     it "should return an empty hash if header_column_html is not passed in" do
