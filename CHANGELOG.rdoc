@@ -1,3 +1,12 @@
+3.5.0
+* table_for now keeps track of the current index of the row being render, per
+suggestion by @jlfy. Example:
+  <%= table_for @users do |table| %>
+    <% table.column :id do |user| %>
+      "User id #{user.id} rendering with row index #{table.current_index}"
+    <% end %>
+  <% end %>
+
 3.4.1
 * Fixed bug introduced in version 3.4.0 where link_namespace defined globally
 on the table_for call was getting completely ignored. Thanks @panyamin for reporting.

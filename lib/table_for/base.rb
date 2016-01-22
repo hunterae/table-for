@@ -8,6 +8,10 @@ module TableFor
     attr_accessor :current_record
     alias_method :current_row, :current_record
 
+    attr_accessor :current_index
+    alias_method :current_row_index, :current_index
+
+
     def initialize(view, options={})
       super(view, TableFor.config.merge(options))
     end
@@ -92,8 +96,9 @@ module TableFor
       end
     end
 
-    def set_current_record(record)
+    def set_current_record_and_index(record, index)
       self.current_record = record
+      self.current_index = index
     end
 
     def header_sort_link(column, options={}, &block)

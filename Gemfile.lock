@@ -1,9 +1,9 @@
 PATH
   remote: .
   specs:
-    table-for (3.4.0)
+    table-for (3.5.0)
       rails (>= 3.0.0)
-      with_template (~> 0.1.0)
+      with_template (~> 0.2.0)
 
 GEM
   remote: http://rubygems.org/
@@ -36,7 +36,7 @@ GEM
       i18n (= 0.6.1)
       multi_json (~> 1.0)
     arel (3.0.3)
-    blocks (2.7.0)
+    blocks (2.8.0)
       call_with_params (~> 0.0.2)
       hashie
       rails (>= 3.0.0)
@@ -121,8 +121,8 @@ GEM
     tzinfo (0.3.46)
     with_model (1.2.1)
       activerecord (>= 3.0)
-    with_template (0.1.0)
-      blocks (~> 2.7.0)
+    with_template (0.2.0)
+      blocks (~> 2.8.0)
       rails (>= 3.0.0)
     xml-simple (1.1.1)
 

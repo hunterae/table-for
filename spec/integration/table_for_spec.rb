@@ -529,6 +529,17 @@ describe "table_for" do
         </table>%)
       XmlSimple.xml_in(buffer, 'NormaliseSpace' => 2).should eql xml
     end
+
+    it "should be able to use the table's current_index in a cell's data_column_html" do
+      buffer = @view.table_for @users do |table|
+        table.column :id, data_column_html: {
+            class: lambda { |record| "column-for-row-#{table.current_index}"
+          }
+        }
+      end
+      html_includes?(buffer, "<td class='column-for-row-0'>1</td>")
+      html_includes?(buffer, "<td class='column-for-row-1'>2</td>")
+    end
   end
 
   describe "column data contents block" do
@@ -539,6 +550,16 @@ describe "table_for" do
         end
         html_includes?(buffer, "<a href='/users/1'>andrew.hunter@livingsocial.com</a>")
       end
+    end
+
+    it "should be able to use the table's current_index in the content of a cell" do
+      buffer = @view.table_for @users do |table|
+        table.column :id do |user|
+          "User id #{user.id} rendering with row index #{table.current_index}"
+        end
+      end
+      html_includes?(buffer, "User id 1 rendering with row index 0")
+      html_includes?(buffer, "User id 2 rendering with row index 1")
     end
 
     it "should allow a link_url proc to render a link surrounding a table cell's content" do

@@ -36,7 +36,7 @@
 <% end %>
 
 <% table.define :data_row do |record, options| %>
-  <% table.set_current_record(record) %>
+  <% table.set_current_record_and_index(record, options[:current_index]) %>
   <%= content_tag :tr, table.call_each_hash_value_with_params(options[:data_row_html], record) do %>
     <%= table.render :data_column, record, :collection => table.columns %>
   <% end %>
