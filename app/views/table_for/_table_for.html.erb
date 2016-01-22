@@ -43,15 +43,18 @@
 <% end %>
 
 <% table.define :data_column do |column, record, options| %>
-  <%= content_tag :td, table.call_each_hash_value_with_params(options[:data_column_html], record, column) do %>
-    <%= table.render column.name, record, column, column.options %>
-  <% end %>
+  <%= content_tag :td,
+        table.call_each_hash_value_with_params(options[:data_column_html],
+                                               record,
+                                               column) do
+      table.render(column.name, record, column, column.options)
+    end %>
 <% end %>
 
 <%# Define a block for each column, named using that column's name %>
-<% table.define lambda {|column| column.name }, :collection => table.columns, :link_html => {} do |record, column, options| %>
-  <%= table.cell_content(record, column, options) %>
-<% end %>
+<% table.define lambda {|column| column.name }, :collection => table.columns, :link_html => {} do |record, column, options| -%>
+<%= table.cell_content(record, column, options) -%>
+<% end -%>
 
 <% table.define :footer do |options| %>
   <%= table.content_tag_with_block options[:tfoot_tag], options[:tfoot_html] do %>

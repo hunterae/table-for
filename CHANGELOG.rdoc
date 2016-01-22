@@ -1,3 +1,6 @@
+3.6.0
+* Generated td tags will collapse all whitespace per suggestion by @jlfy.
+
 3.5.0
 * table_for now keeps track of the current index of the row being render, per
 suggestion by @jlfy. Example:
