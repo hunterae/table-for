@@ -548,6 +548,21 @@ describe "table_for" do
       html_includes?(buffer, "<a href='/admin/users/1'>andrew.hunter@livingsocial.com</a>")
     end
 
+    it "should use the globally defined link_namespace unless defined directly on the column" do
+      @view.class.send(:define_method, :admin_user_path) do |user|
+        "/admin/users/#{user.id}"
+      end
+      @view.class.send(:define_method, :profile_user_path) do |user|
+        "/profile/users/#{user.id}"
+      end
+      buffer = @view.table_for @users, link_namespace: :admin do |table|
+        table.column :email, link: true
+        table.column :id, link_namespace: :profile, link: true
+      end
+      html_includes?(buffer, "<a href='/admin/users/1'>andrew.hunter@livingsocial.com</a>")
+      html_includes?(buffer, "<a href='/profile/users/1'>1</a>")
+    end
+
     it "should be able to replace an individual column data contents block" do
       buffer = @view.table_for @users[0,1] do |table|
         table.column :email, :header => "Email Address"

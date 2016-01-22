@@ -33,7 +33,11 @@ module TableFor
           url = if options[:link_url]
             call_with_params(options[:link_url], record)
           else
-            [options[:link_action], options[:link_namespace], record].flatten.compact
+            [
+              options[:link_action],
+              options[:link_namespace] || global_options[:link_namespace],
+              record
+            ].flatten.compact
           end
           html_options = {data: {}}
           html_options[:data][:method] = options[:link_method] if options[:link_method].present?

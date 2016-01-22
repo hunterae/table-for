@@ -1,3 +1,7 @@
+3.4.1
+* Fixed bug introduced in version 3.4.0 where link_namespace defined globally
+on the table_for call was getting completely ignored. Thanks @panyamin for reporting.
+
 3.4.0
 * Links options that are applied to a column will now generate the link even if you override
 column. In haml, this example pointed out by @noctivityinc, now works:
