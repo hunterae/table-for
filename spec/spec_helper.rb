@@ -9,7 +9,6 @@ require 'xmlsimple'
 require 'active_record'
 require 'active_support/all'
 require 'with_model'
-require 'byebug'
 
 def print_hash(hash)
   hash.inject("") { |s, (k, v)| "#{s} #{k}: #{v}." }
