@@ -27,6 +27,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "supermodel"
   spec.add_development_dependency "sqlite3"
   spec.add_development_dependency "with_model"
-  spec.add_development_dependency "byebug"
   spec.add_development_dependency "nokogiri"
 end
