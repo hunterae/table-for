@@ -115,6 +115,9 @@ module TableFor
         end
 
         parameters = view.params.merge(:order => order, :sort_mode => next_sort_mode)
+        if parameters.respond_to?(:to_unsafe_h)
+          parameters = parameters.to_unsafe_h
+        end
         parameters.delete(:action)
         parameters.delete(:controller)
         url = options[:sort_url] ? options[:sort_url] : ""

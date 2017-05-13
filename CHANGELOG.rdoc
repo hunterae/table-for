@@ -1,3 +1,9 @@
+3.6.1
+* Fixed :sortable option for Rails 5 that was breaking when
+ActionController::Parameters#to_query was being called without any arguments
+as reported and fixed by @karwank here https://github.com/hunterae/table-for/pull/10.
+Thanks @karwank.
+
 3.6.0
 * Generated td tags will collapse all whitespace per suggestion by @jlfy.
 

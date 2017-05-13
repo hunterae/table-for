@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    table-for (3.6.0)
+    table-for (3.6.1)
       rails (>= 3.0.0)
       with_template (~> 0.2.0)
 
@@ -141,4 +141,4 @@ DEPENDENCIES
   xml-simple (= 1.1.1)
 
 BUNDLED WITH
-   1.11.2
+   1.13.6
