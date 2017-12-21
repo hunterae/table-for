@@ -263,7 +263,7 @@ link_url::
       <% table.column :header => false,
                       :data => "DELETE",
                       :link_method => :DELETE,
-                      :link_url => lambda { admin_user_path(user) } %>
+                      :link_url => lambda { |user| admin_user_path(user) } %>
     <% end %>
 link_action::
   (defaults to nil)
