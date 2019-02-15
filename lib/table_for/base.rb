@@ -58,7 +58,7 @@ module TableFor
       if options[:sortable]
         order = options[:order] ? options[:order].to_s : column.name.to_s
 
-        sort_modes = TableFor.config.sort_modes
+        sort_modes = options[:sort_modes].presence || TableFor.config.sort_modes
         current_sort_mode = (view.params[:order] != order || view.params[:sort_mode].blank?) ? nil : view.params[:sort_mode]
         current_sort_mode = sort_modes[sort_modes.index(current_sort_mode.to_sym)] rescue nil if current_sort_mode
         sort_class = "sorting#{"_#{current_sort_mode}" if current_sort_mode}"
@@ -105,7 +105,7 @@ module TableFor
       if options[:sortable] && (options[:header] || !column.anonymous)
         order = options[:order] ? options[:order].to_s : column.name.to_s
 
-        sort_modes = TableFor.config.sort_modes
+        sort_modes = options[:sort_modes].presence || TableFor.config.sort_modes
         current_sort_mode = (view.params[:order] != order || view.params[:sort_mode].blank?) ? nil : view.params[:sort_mode]
         next_sort_mode_index = sort_modes.index(current_sort_mode.to_sym) + 1 rescue 0
         if next_sort_mode_index == sort_modes.length
