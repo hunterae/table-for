@@ -115,11 +115,11 @@ module TableFor
         end
 
         parameters = view.params.merge(:order => order, :sort_mode => next_sort_mode)
+        parameters.delete(:action)
+        parameters.delete(:controller)
         if parameters.respond_to?(:to_unsafe_h)
           parameters = parameters.to_unsafe_h
         end
-        parameters.delete(:action)
-        parameters.delete(:controller)
         url = options[:sort_url] ? options[:sort_url] : ""
         view.link_to view.capture(self, &block), "#{url}?#{parameters.to_query}"
       else
