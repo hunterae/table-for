@@ -115,6 +115,7 @@ module TableFor
         end
 
         parameters = view.params.merge(:order => order, :sort_mode => next_sort_mode)
+        [options[:sort_params_exclude]].flatten.map(&:presence).compact.each { |key| parameters.delete(key.to_s.to_sym) } if options[:sort_params_exclude].present?
         if parameters.respond_to?(:to_unsafe_h)
           parameters = parameters.to_unsafe_h
         end
