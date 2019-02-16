@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    table-for (3.6.1)
+    table-for (3.6.2)
       rails (>= 3.0.0)
       with_template (~> 0.2.0)
 
@@ -45,12 +45,12 @@ GEM
       activesupport (>= 3.0.0)
     diff-lcs (1.2.5)
     erubis (2.7.0)
-    hashie (3.4.3)
+    hashie (3.6.0)
     hike (1.2.3)
     i18n (0.6.1)
     journey (1.0.4)
     json (1.8.6)
-    mail (2.5.4)
+    mail (2.5.5)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     metaclass (0.0.1)
@@ -139,4 +139,4 @@ DEPENDENCIES
   xml-simple (= 1.1.1)
 
 BUNDLED WITH
-   1.14.6
+   1.17.3

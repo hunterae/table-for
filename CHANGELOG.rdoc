@@ -1,3 +1,7 @@
+3.6.2
+* Added :sort_modes option to be able to specify sort_modes on a column by column basis (thanks {karwank}[https://github.com/karwank])
+* Fixed bug preventing action and controller from being removed in pagination link params in some versions of Rails (thanks {karwank}[https://github.com/karwank])
+
 3.6.1
 * Fixed :sortable option for Rails 5 that was breaking when
 ActionController::Parameters#to_query was being called without any arguments
