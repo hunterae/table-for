@@ -1,3 +1,9 @@
+3.7.0
+* The page param is no longer included in the sort links generated for columns. This was pointed out 
+by {karwank}[https://github.com/karwank] as unexpected behavior. I am bumping the minor version of the 
+gem since this does change the default behavior, in case anybody is not expecting the default sort behavior to 
+have been updated.
+
 3.6.2
 * Added :sort_modes option to be able to specify sort_modes on a column by column basis (thanks {karwank}[https://github.com/karwank])
 * Fixed bug preventing action and controller from being removed in pagination link params in some versions of Rails (thanks {karwank}[https://github.com/karwank])

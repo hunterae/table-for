@@ -138,8 +138,8 @@ describe TableFor::Base do
       @base.header_sort_link(@column, :order => "first_name,last_name", :sortable => true).should eql "my link"
     end
 
-    it "should remove the action and controller params when generating the url" do
-      @view.expects(:params).at_least_once.returns(:controller => "users", :action => "show")
+    it "should remove the action, controller, and page params when generating the url" do
+      @view.expects(:params).at_least_once.returns(:controller => "users", :action => "show", page: 50)
       @view.expects(:link_to).with(@column.name.to_s.titleize, "?order=#{@column.name}&sort_mode=asc").returns "my link"
       @base.header_sort_link(@column, :sortable => true) { @column.name.to_s.titleize }.should eql "my link"
     end
