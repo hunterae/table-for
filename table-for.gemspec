@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "rails", ">= 3.0.0"
-  spec.add_dependency "with_template", "~> 0.2.0"
+  spec.add_dependency "blocks", ">= 3.0.0"
 
   spec.add_development_dependency "rspec-rails", ">= 2.0.0.beta.20"
   spec.add_development_dependency "mocha", "0.10.3"

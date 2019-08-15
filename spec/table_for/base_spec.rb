@@ -4,7 +4,7 @@ describe TableFor::Base do
   before(:each) do
     @view_class = Class.new
     @view = @view_class.new
-    @view_class.send(:include, Blocks::ViewAdditions)
+    @view_class.send(:include, Blocks::ViewExtensions)
     @base = TableFor::Base.new(@view)
     @records = [OpenStruct.new(:id => 1)]
     @column = stub(:name => :my_column, :anonymous => false)
@@ -14,28 +14,22 @@ describe TableFor::Base do
     it "should define a block with the specified options and force header to be present" do
       proc = Proc.new {}
       @base.header(:first_name, :option_1 => 10, :option2 => "abcd", &proc)
-      block = @base.blocks[:first_name_header]
-      block.should be_present
-      block.should be_a(Blocks::Container)
-      block.block.should eql(proc)
-      block.options.should eql(:option_1 => 10, :option2 => "abcd", :header => true)
+      block = @base.block_definitions[:first_name_header]
+      block.should be_a(Blocks::BlockDefinition)
+      block.standard_options.should eql(block: proc, :option_1 => 10, :option2 => "abcd", :header => true)
 
       @base.header(:last_name, :header => "LAST NAME", &proc)
-      block = @base.blocks[:last_name_header]
-      block.should be_present
-      block.should be_a(Blocks::Container)
-      block.block.should eql(proc)
-      block.options.should eql(:header => "LAST NAME")
+      block = @base.block_definitions[:last_name_header]
+      block.should be_a(Blocks::BlockDefinition)
+      block.standard_options.should eql(block: proc, header: "LAST NAME")
     end
 
     it "should not require options to be passed" do
       proc = Proc.new {}
       @base.header(:last_name, &proc)
-      block = @base.blocks[:last_name_header]
-      block.should be_present
-      block.should be_a(Blocks::Container)
-      block.block.should eql(proc)
-      block.options.should eql(:header => true)
+      block = @base.block_definitions[:last_name_header]
+      block.should be_a(Blocks::BlockDefinition)
+      block.standard_options.should eql(block: proc, header: true)
     end
   end
 
@@ -43,21 +37,17 @@ describe TableFor::Base do
     it "should define a block named footer_content with the specified options" do
       proc = Proc.new {}
       @base.footer :option_1 => "First Option", &proc
-      block = @base.blocks[:footer_content]
-      block.should be_present
-      block.should be_a(Blocks::Container)
-      block.block.should eql(proc)
-      block.options.should eql(:option_1 => "First Option")
+      block = @base.block_definitions[:footer_content]
+      block.should be_a(Blocks::BlockDefinition)
+      block.standard_options.should eql(block: proc, :option_1 => "First Option")
     end
 
     it "should not require options to be passed" do
       proc = Proc.new {}
       @base.footer(&proc)
-      block = @base.blocks[:footer_content]
-      block.should be_present
-      block.should be_a(Blocks::Container)
-      block.block.should eql(proc)
-      block.options.should eql({})
+      block = @base.block_definitions[:footer_content]
+      block.should be_a(Blocks::BlockDefinition)
+      block.standard_options.should eql(block: proc)
     end
   end
 

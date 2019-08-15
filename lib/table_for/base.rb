@@ -1,19 +1,20 @@
-require 'with_template'
 require 'blocks'
 
 module TableFor
-  class Base < WithTemplate::Base
-    alias columns queued_blocks
-
+  class Base < Blocks::Builder
     attr_accessor :current_record
     alias_method :current_row, :current_record
 
     attr_accessor :current_index
     alias_method :current_row_index, :current_index
 
+    attr_accessor :columns
 
     def initialize(view, options={})
-      super(view, TableFor.config.merge(options))
+      self.columns = []
+      options = Blocks::OptionsSet.new(options)
+      options.add_options(TableFor.config)
+      super(view, options)
     end
 
     def header(name, options={}, &block)
@@ -26,20 +27,20 @@ module TableFor
 
     def column(*args, &block)
       options = args.extract_options!
-      queue(*args, options, &block)
+      columns << define(*args, options, &block).clone
       if options[:link_url] ||
          options[:link_action] ||
          options[:link_method] ||
          options[:link_confirm] ||
          options[:link]
-        around(columns.last.name) do |content_block, record, column, options|
-          options = options.merge(column.options)
+        surround(columns.last.name) do |content_block, record, column, options|
+          # options = options.merge(column)
           url = if options[:link_url]
             call_with_params(options[:link_url], record)
           else
             [
               options[:link_action],
-              options[:link_namespace] || global_options[:link_namespace],
+              options[:link_namespace],
               record
             ].flatten.compact
           end
@@ -58,7 +59,7 @@ module TableFor
       if options[:sortable]
         order = options[:order] ? options[:order].to_s : column.name.to_s
 
-        sort_modes = options[:sort_modes].presence || TableFor.config.sort_modes
+        sort_modes = options[:sort_modes].presence || options_set.default_options[:sort_modes]
         current_sort_mode = (view.params[:order] != order || view.params[:sort_mode].blank?) ? nil : view.params[:sort_mode]
         current_sort_mode = sort_modes[sort_modes.index(current_sort_mode.to_sym)] rescue nil if current_sort_mode
         sort_class = "sorting#{"_#{current_sort_mode}" if current_sort_mode}"
@@ -68,7 +69,7 @@ module TableFor
       header_column_html
     end
 
-    def header_cell_content(column, options={})
+    def header_cell_content(column, options)
       unless options[:header] == false
         header_sort_link(column, options) do
           if options[:header]
@@ -76,7 +77,7 @@ module TableFor
           elsif column.anonymous
             nil
           else
-            I18n.t("#{translation_lookup_prefix}.#{column.name.to_s.underscore}", :default => column.name.to_s.titleize)
+            I18n.t("#{translation_lookup_prefix(options)}.#{column.name.to_s.underscore}", :default => column.name.to_s.titleize)
           end
         end
       end
@@ -105,7 +106,7 @@ module TableFor
       if options[:sortable] && (options[:header] || !column.anonymous)
         order = options[:order] ? options[:order].to_s : column.name.to_s
 
-        sort_modes = options[:sort_modes].presence || TableFor.config.sort_modes
+        sort_modes = options[:sort_modes].presence || options_set.default_options[:sort_modes]
         current_sort_mode = (view.params[:order] != order || view.params[:sort_mode].blank?) ? nil : view.params[:sort_mode]
         next_sort_mode_index = sort_modes.index(current_sort_mode.to_sym) + 1 rescue 0
         if next_sort_mode_index == sort_modes.length
@@ -129,13 +130,13 @@ module TableFor
     end
 
     private
-    def translation_lookup_prefix
-      if global_options[:records].respond_to?(:model)
-        "activerecord.attributes.#{global_options[:records].model.to_s.underscore}"
-      elsif global_options[:records].all? {|record| record.is_a?(ActiveRecord::Base) && record.class == global_options[:records].first.class }
-        "activerecord.attributes.#{global_options[:records].first.class.to_s.underscore}"
-      elsif global_options[:records].all? {|record| record.class == global_options[:records].first.class }
-        "tables.columns.#{global_options[:records].first.class.to_s.underscore}"
+    def translation_lookup_prefix(options)
+      if options[:records].respond_to?(:model)
+        "activerecord.attributes.#{options[:records].model.to_s.underscore}"
+      elsif options[:records].all? {|record| record.is_a?(ActiveRecord::Base) && record.class == options[:records].first.class }
+        "activerecord.attributes.#{options[:records].first.class.to_s.underscore}"
+      elsif options[:records].all? {|record| record.class == options[:records].first.class }
+        "tables.columns.#{options[:records].first.class.to_s.underscore}"
       else
         "tables.columns"
       end
