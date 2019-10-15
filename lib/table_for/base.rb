@@ -132,6 +132,8 @@ module TableFor
     def translation_lookup_prefix
       if global_options[:records].respond_to?(:model)
         "activerecord.attributes.#{global_options[:records].model.to_s.underscore}"
+      elsif defined?(Draper::Decorator) && global_options[:records].all? {|record| record.is_a?(Draper::Decorator) && record.class == global_options[:records].first.class && record.respond_to?(:object) }
+        "activerecord.attributes.#{global_options[:records].first.object.class.to_s.underscore}"
       elsif global_options[:records].all? {|record| record.is_a?(ActiveRecord::Base) && record.class == global_options[:records].first.class }
         "activerecord.attributes.#{global_options[:records].first.class.to_s.underscore}"
       elsif global_options[:records].all? {|record| record.class == global_options[:records].first.class }
