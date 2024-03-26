@@ -49,7 +49,8 @@
   <% end %>
 <% end %>
 
-<% table.define :data_row do |record, options| %>
+<% table.define :data_row do |options| %>
+  <% record = options[:object] %>
   <% table.set_current_record_and_index(record, options[:current_index]) %>
   <%= content_tag :tr, table.call_each_hash_value_with_params(options[:data_row_html], record) do %>
     <% table.columns.each do |column| %>

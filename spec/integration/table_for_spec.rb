@@ -1,12 +1,12 @@
 require "spec_helper"
+require 'byebug'
 
-describe "table_for" do
-  with_model :user do
+describe "table-for" do
+  with_model :User do
     table do |t|
-      t.integer "id"
-      t.string "email"
-      t.string "first_name"
-      t.string "last_name"
+      t.string :email
+      t.string :first_name
+      t.string :last_name
     end
   end
 
@@ -17,12 +17,13 @@ describe "table_for" do
     end
   end
 
-  before :each do
-    User.create! id: 1, :email => "andrew.hunter@livingsocial.com", :first_name => "Andrew", :last_name => "Hunter"
-    User.create! id: 2, :email => "todd.fisher@livingsocial.com", :first_name => "Todd", :last_name => "Fisher"
-    User.create! id: 3, :email => "jon.phillips@livingsocial.com", :first_name => "Jon", :last_name => "Phillips"
+  before do
+    User.create! :email => "andrew.hunter@livingsocial.com", :first_name => "Andrew", :last_name => "Hunter"
+    User.create! :email => "todd.fisher@livingsocial.com", :first_name => "Todd", :last_name => "Fisher"
+    User.create! :email => "jon.phillips@livingsocial.com", :first_name => "Jon", :last_name => "Phillips"
     @users = User.all
     @view = ActionView::Base.new("app/views")
+    
     @view.class.send(:define_method, :user_path) do |user|
       "/users/#{user.id}"
     end
@@ -545,6 +546,11 @@ describe "table_for" do
   describe "column data contents block" do
     context "when passing a link param" do
       it "render a link surrounding a table cell's content when it is true" do
+        # a little bit of hackery here as different versions of Rails start changing how url_for 
+        #  and routing works, so harder to simulate here
+        @view.class.define_method(:url_for) do |args|
+          user_path(args.first)
+        end
         buffer = @view.table_for @users do |table|
           table.column :email, link: true
         end
@@ -575,6 +581,11 @@ describe "table_for" do
       end
       @view.class.send(:define_method, :profile_user_path) do |user|
         "/profile/users/#{user.id}"
+      end
+      # a little bit of hackery here as different versions of Rails start changing how url_for 
+      #  and routing works, so harder to simulate here
+      @view.class.define_method(:url_for) do |args|
+        send("#{args.first}_user_path", args.last)
       end
       buffer = @view.table_for @users, link_namespace: :admin do |table|
         table.column :email, link: true

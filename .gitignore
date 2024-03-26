@@ -4,3 +4,4 @@
 .bundle
 spec/database.yml
 Gemfile.lock
+.byebug_history

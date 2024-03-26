@@ -12,8 +12,6 @@ module TableFor
 
     def initialize(view, options={})
       self.columns = []
-      options = Blocks::OptionsSet.new(options)
-      options.add_options(TableFor.config)
       super(view, options)
     end
 
@@ -127,6 +125,10 @@ module TableFor
       else
         view.capture(self, &block)
       end
+    end
+
+    def call_each_hash_value_with_params(*)
+      super
     end
 
     private
