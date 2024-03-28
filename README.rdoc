@@ -5,7 +5,7 @@ the columns to render and to override how the table, the header columns, the row
 
 == Installation
 
-In <b>Rails 3 or Rails 4</b>, add this to your Gemfile.
+Add this to your Gemfile.
 
   gem "table-for"
 
