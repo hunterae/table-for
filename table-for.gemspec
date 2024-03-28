@@ -24,8 +24,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec-rails", "~> 3.8"
   spec.add_development_dependency "mocha", "0.10.3"
   spec.add_development_dependency "xml-simple", "1.1.1"
+  spec.add_development_dependency "rexml"
   spec.add_development_dependency "supermodel"
   spec.add_development_dependency "sqlite3"
-  spec.add_development_dependency "with_model"
+  spec.add_development_dependency "with_model", "1.2.1"
   spec.add_development_dependency "nokogiri"
 end
