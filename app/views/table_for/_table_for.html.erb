@@ -1,77 +1,104 @@
-<% table.define :table do |options| %>
-  <%= content_tag :table, options[:table_html] do %>
-    <%= table.render :header %>
-    <%= table.render :body %>
-    <%= table.render :footer %>
-  <% end %>
+<% table.define :table,
+  wrapper: :content_tag,
+  wrapper_html_option: :table_html,
+  wrapper_tag: :table do %>
+  <%= table.render :header %>
+  <%= table.render :body %>
+  <%= table.render :footer %>
 <% end %>
 
-<% table.define :header do |options| %>
-  <%= table.content_tag_with_block options[:thead_tag], options[:thead_html] do %>
-    <%= table.render :header_row %>
-  <% end %>
+<% table.define :header,
+  wrap_all: :thead_tag,
+  wrapper: :header_row do |options| %>
+  <% table.columns.each do |column| %>
+      <%#
+          Passing column twice has the effect of both passing column as the first argument to
+          the definition of :header_column and also merging its options into the generated
+          Blocks::RuntimeContext
+      %>
+      <%= table.render :header_column, column, column %>
+    <% end %>
 <% end %>
 
-<% table.define :header_row do |options| %>
-  <%= content_tag :tr, options[:header_row_html] do %>
-    <%= table.render :header_column, :collection => table.columns %>
-  <% end %>
-<% end %>
+<% table.define :thead_tag,
+  with: :content_tag,
+  html_option: :thead_html,
+  tag: thead_tag if thead_tag %>
+
+<% table.define :header_row,
+  with: :content_tag,
+  html_option: :header_row_html,
+  tag: :tr  %>
 
 <% table.define :header_column do |column, options| %>
   <%= content_tag :th, table.header_column_html(column, options) do %>
-    <%= table.render "#{column.name}_header", column, column.options %>
+    <%= table.render "#{column.name}_header", column %>
   <% end %>
 <% end %>
 
 <%# Define a header block for each column, named using that column's name with the word "_header" appended to it %>
-<% table.define lambda {|column| "#{column.name}_header" }, :collection => table.columns do |column, options| %>
-  <%= table.header_cell_content(column, options) %>
+<% table.columns.each do |column| %>
+  <% table.define "#{column.name}_header" do |options| %>
+    <%= table.header_cell_content(column, options) %>
+  <% end %>
 <% end %>
 
 <% table.define :body do |options| %>
-  <%= table.content_tag_with_block options[:tbody_tag], options[:tbody_html] do %>
+  <%= table.content_tag options[:tbody_tag], options[:tbody_html] do %>
     <%= table.render :data_row, :collection => records %>
   <% end %>
 <% end %>
 
-<% table.define :data_row do |record, options| %>
+<% table.define :data_row do |options| %>
+  <% record = options[:object] %>
   <% table.set_current_record_and_index(record, options[:current_index]) %>
   <%= content_tag :tr, table.call_each_hash_value_with_params(options[:data_row_html], record) do %>
-    <%= table.render :data_column, record, :collection => table.columns %>
+    <% table.columns.each do |column| %>
+      <%= table.render column.name, 
+        record,
+        column,
+        defaults: {
+          wrapper: :data_column
+        } %>
+    <% end %>
   <% end %>
 <% end %>
 
-<% table.define :data_column do |column, record, options| %>
-  <%= content_tag :td,
-        table.call_each_hash_value_with_params(options[:data_column_html],
-                                               record,
-                                               column) do
-      table.render(column.name, record, column, column.options)
-    end %>
-<% end %>
+<% table.define :data_column,
+  with: :content_tag,
+  html_option: :data_column_html,
+  tag: :td %>
 
 <%# Define a block for each column, named using that column's name %>
-<% table.define lambda {|column| column.name }, :collection => table.columns, :link_html => {} do |record, column, options| -%>
-<%= table.cell_content(record, column, options) -%>
-<% end -%>
+<% table.columns.each do |column| %>
+  <% table.define column.name, :link_html => {} do |record, column, options| -%>
+    <%= table.cell_content(record, column, options) -%>
+  <% end -%>
+<% end %>
 
-<% table.define :footer do |options| %>
-  <%= table.content_tag_with_block options[:tfoot_tag], options[:tfoot_html] do %>
-    <%= table.render :footer_row %>
-  <% end %>
-<% end if table.defined?(:footer_content) %>
+<% if table.block_defined?(:footer_content) %>
+  <% table.define :footer,
+    wrap_all: :tfoot_tag,
+    outer_wrapper: :footer_row,
+    wrapper: :footer_column,
+    with: :footer_content
+  %>
 
-<% table.define :footer_row do |options| %>
-  <%= content_tag :tr, options[:footer_row_html] do %>
-    <%= table.render :footer_column %>
-  <% end %>
-<% end if table.defined?(:footer_content) %>
+  <% table.define :tfoot_tag,
+    with: :content_tag,
+    html_option: :tfoot_html,
+    tag: tfoot_tag if tfoot_tag %>
 
-<% table.define :footer_column do |options| %>
-  <%= content_tag :td, {:colspan => table.columns.length}.merge(table.blocks[:footer_content].options[:footer_column_html] || {}) do %>
-    <%= table.render :footer_content %>
-  <% end %>
-<% end if table.defined?(:footer_content) %>
+  <% table.define :footer_row,
+    with: :content_tag,
+    html_option: :footer_row_html,
+    tag: :tr  %>
+
+  <% table.define :footer_column,
+    with: :content_tag,
+    html_option: :footer_column_html,
+    tag: :td,
+    html: { colspan: table.columns.length } %>
+<% end %>
 
 <%= table.render :table %>

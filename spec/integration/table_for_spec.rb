@@ -1,12 +1,12 @@
 require "spec_helper"
+require 'byebug'
 
-describe "table_for" do
-  with_model :user do
+describe "table-for" do
+  with_model :User do
     table do |t|
-      t.integer "id"
-      t.string "email"
-      t.string "first_name"
-      t.string "last_name"
+      t.string :email
+      t.string :first_name
+      t.string :last_name
     end
   end
 
@@ -17,12 +17,13 @@ describe "table_for" do
     end
   end
 
-  before :each do
-    User.create! id: 1, :email => "andrew.hunter@livingsocial.com", :first_name => "Andrew", :last_name => "Hunter"
-    User.create! id: 2, :email => "todd.fisher@livingsocial.com", :first_name => "Todd", :last_name => "Fisher"
-    User.create! id: 3, :email => "jon.phillips@livingsocial.com", :first_name => "Jon", :last_name => "Phillips"
+  before do
+    User.create! :email => "andrew.hunter@livingsocial.com", :first_name => "Andrew", :last_name => "Hunter"
+    User.create! :email => "todd.fisher@livingsocial.com", :first_name => "Todd", :last_name => "Fisher"
+    User.create! :email => "jon.phillips@livingsocial.com", :first_name => "Jon", :last_name => "Phillips"
     @users = User.all
     @view = ActionView::Base.new("app/views")
+    
     @view.class.send(:define_method, :user_path) do |user|
       "/users/#{user.id}"
     end
@@ -58,7 +59,7 @@ describe "table_for" do
         table.column :last_name
       end
 
-      buffer.strip.should eql "My new table definition"
+      buffer.strip.should eql "<table>My new table definition</table>"
     end
 
     it "should be able to specify html attributes" do
@@ -72,7 +73,7 @@ describe "table_for" do
     it "should be able to replace the thead block" do
       buffer = @view.table_for @users[0,1] do |table|
         table.define :header do
-          "<thead><tr><th>My new header definition</th></tr></thead>".html_safe
+          "<th>My new header definition</th>".html_safe
         end
         table.column :first_name
       end
@@ -232,7 +233,7 @@ describe "table_for" do
     it "should be able to override the definition for a particular column header block" do
       buffer = @view.table_for @users[0,1] do |table|
         table.column :email, :header => "Email Address"
-        table.define :email_header do |column, options|
+        table.define :email_header do |options|
           "My Own Header (Replaced #{options[:header]})"
         end
       end
@@ -248,7 +249,7 @@ describe "table_for" do
     it "should be able to override the definition for a particular column header block using the table_for 'header' method" do
       buffer = @view.table_for @users[0,1] do |table|
         table.column :email, :header => "Email Address"
-        table.header :email do |column, options|
+        table.header :email do |options|
           "My Own Header (Replaced #{options[:header]})"
         end
       end
@@ -458,7 +459,7 @@ describe "table_for" do
   describe "data_column block" do
     it "should be able to replace the data_column block" do
       buffer = @view.table_for @users[0, 1] do |table|
-        table.define :data_column do |column, user, options|
+        table.define :data_column do |content_block, user, column, options|
           "<td>#{column.name.to_s.titleize} value is #{user.send(column.name)}</td>".html_safe
         end
         table.column :email
@@ -545,6 +546,11 @@ describe "table_for" do
   describe "column data contents block" do
     context "when passing a link param" do
       it "render a link surrounding a table cell's content when it is true" do
+        # a little bit of hackery here as different versions of Rails start changing how url_for 
+        #  and routing works, so harder to simulate here
+        @view.class.define_method(:url_for) do |args|
+          user_path(args.first)
+        end
         buffer = @view.table_for @users do |table|
           table.column :email, link: true
         end
@@ -575,6 +581,11 @@ describe "table_for" do
       end
       @view.class.send(:define_method, :profile_user_path) do |user|
         "/profile/users/#{user.id}"
+      end
+      # a little bit of hackery here as different versions of Rails start changing how url_for 
+      #  and routing works, so harder to simulate here
+      @view.class.define_method(:url_for) do |args|
+        send("#{args.first}_user_path", args.last)
       end
       buffer = @view.table_for @users, link_namespace: :admin do |table|
         table.column :email, link: true

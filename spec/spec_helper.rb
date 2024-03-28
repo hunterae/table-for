@@ -1,12 +1,22 @@
-require 'rubygems'
-require 'bundler/setup'
+begin
+  require 'debugger'
+rescue LoadError
+end
 
-Bundler.require(:default)
+begin
+  require 'byebug'
+rescue LoadError
+end
 
+begin
+  require 'ruby-debug'
+rescue LoadError
+end
+
+require 'rails/all'
 require 'table-for'
 require 'ostruct'
 require 'xmlsimple'
-require 'active_record'
 require 'active_support/all'
 require 'with_model'
 
